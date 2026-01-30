@@ -23,6 +23,18 @@ services:
         sync: false
       - key: OPENROUTER_API_KEY
         sync: false
+      - key: Vnp_TmnCode
+        sync: false
+      - key: Vnp_HashSecret
+        sync: false
+      - key: Vnp_Url
+        value: https://sandbox.vnpayment.vn/paymentv2/vpcpay.html
+      - key: Return_url
+        value: https://${FRONTEND_HOST}/payment-return
+      - key: EMAIL
+        sync: false
+      - key: APP_PASSWORD
+        sync: false
       - key: AI_SERVICE_HOST
         fromService:
           name: picklecoach-aivision
