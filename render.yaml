@@ -1,0 +1,73 @@
+services:
+  # 1. Backend Service (Spring Boot)
+  - type: web
+    name: picklecoach-backend
+    runtime: docker
+    rootDir: pickleball/backend
+    plan: free
+    healthCheckPath: /actuator/health
+    envVars:
+      - key: DB_HOST
+        sync: false # Set manually or via Railway details
+      - key: DB_PORT
+        value: 3306
+      - key: DB_NAME
+        sync: false
+      - key: DB_USER
+        sync: false
+      - key: DB_PASSWORD
+        sync: false
+      - key: CLIENT_ID
+        sync: false
+      - key: CLIENT_SECRET
+        sync: false
+      - key: OPENROUTER_API_KEY
+        sync: false
+      - key: AI_SERVICE_URL_INTERNAL
+        fromService:
+          name: picklecoach-aivision
+          type: web
+          property: host
+      - key: FRONTEND_URL_PUBLIC
+        fromService:
+          name: picklecoach-frontend
+          type: static_site
+          property: url
+
+  # 2. AI Vision Service (Python Fast API)
+  - type: web
+    name: picklecoach-aivision
+    runtime: docker
+    rootDir: PickleballAIVision
+    plan: free
+    envVars:
+      - key: OPENROUTER_API_KEY
+        sync: false
+
+  # 3. Quiz Service (Python)
+  - type: web
+    name: picklecoach-quiz
+    runtime: docker
+    rootDir: Pickeball_AI_Quizz
+    plan: free
+    envVars:
+      - key: OPENROUTER_API_KEY
+        sync: false
+
+  # 4. Frontend (React Static Site)
+  - type: static_site
+    name: picklecoach-frontend
+    rootDir: pickleball/frontend
+    buildCommand: npm install && npm run build
+    publishDir: dist
+    envVars:
+      - key: VITE_API_URL
+        fromService:
+          name: picklecoach-backend
+          type: web
+          property: url
+      - key: VITE_AI_SERVICE_URL
+        fromService:
+          name: picklecoach-aivision
+          type: web
+          property: url
