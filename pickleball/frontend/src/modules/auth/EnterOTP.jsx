@@ -1,5 +1,6 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { verifyOTP, forgotPassword } from '../../api/auth';
 
 const EnterOTP = () => {
     const [otp, setOtp] = useState(Array(6).fill(''));
@@ -56,13 +57,9 @@ const EnterOTP = () => {
         const otpValue = otp.join('');
         if (otpValue.length === 6) {
             try {
-                const response = await fetch('http://localhost:8080/api/users/verify-otp', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ otp: otpValue }),
-                });
-                if (response.ok) navigate('/auth/reset-password');
-                else setError('OTP không đúng');
+                const email = localStorage.getItem('resetEmail');
+                await verifyOTP(email, otpValue);
+                navigate('/auth/reset-password');
             } catch (error) {
                 console.error(error);
                 setError('OTP không đúng');
@@ -77,18 +74,12 @@ const EnterOTP = () => {
             try {
                 const email = localStorage.getItem('resetEmail');
                 if (email) {
-                    const response = await fetch('http://localhost:8080/api/users/forgot-password', {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify({ email }),
-                    });
-                    if (response.ok) {
-                        setResendTimer(15);
-                        setCanResend(false);
-                        setOtp(Array(6).fill('')); // Xóa OTP cũ khi gửi lại
-                        setError(''); // Xóa thông báo lỗi khi gửi lại
-                        inputsRef.current[0].focus();
-                    }
+                    await forgotPassword(email);
+                    setResendTimer(15);
+                    setCanResend(false);
+                    setOtp(Array(6).fill('')); // Xóa OTP cũ khi gửi lại
+                    setError(''); // Xóa thông báo lỗi khi gửi lại
+                    inputsRef.current[0].focus();
                 }
             } catch (error) {
                 console.error('Failed to resend OTP:', error);

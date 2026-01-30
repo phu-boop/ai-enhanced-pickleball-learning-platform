@@ -12,8 +12,7 @@ const Users = () => {
     const [newUser, setNewUser] = useState({ name: '', email: '', password: '' });
     const [showAlert, setShowAlert] = useState(false);
     const [alertMessage, setAlertMessage] = useState('');
-    console.log(sessionStorage.getItem('token'));
-    console.log(sessionStorage.getItem('role'));
+
     const navigate = useNavigate();
 
     const fetchUsersLoad = async () => {
@@ -100,11 +99,11 @@ const Users = () => {
                 setShowAlert(true);
                 setAlertMessage('Invalid email format. Please enter a valid email address.');
                 return;
-            }else if (!isValidPassword) {
+            } else if (!isValidPassword) {
                 setShowAlert(true);
                 setAlertMessage('Password must be at least 6 characters long.');
                 return;
-            }else{
+            } else {
                 setShowAlert(true);
                 setAlertMessage('email already exists. Please use a different email.');
             }
@@ -173,13 +172,13 @@ const Users = () => {
                             Create
                         </button>
                         <div className='mt-4 w-full'>
-                        {showAlert && (
-                            <Alert
-                                message={alertMessage}
-                                onClose={() => setShowAlert(false)}
-                                type="info"
-                            />
-                        )}
+                            {showAlert && (
+                                <Alert
+                                    message={alertMessage}
+                                    onClose={() => setShowAlert(false)}
+                                    type="info"
+                                />
+                            )}
                         </div>
                     </div>
                 </form>

@@ -1,6 +1,6 @@
 import { Upload } from "lucide-react";
 import { useState } from "react";
-import axios from "axios";
+import { uploadVideoAnalysis } from "../../api/user/video";
 import { Card, CardContent } from "../../components/ui/card";
 import Button from "../../components/Button";
 import { useAuth } from "../../contexts/AuthContext";
@@ -15,12 +15,12 @@ function UploadVideo() {
 
   const handleFileChange = (e) => {
     const selectedFile = e.target.files?.[0];
-    console.log("Selected file:", selectedFile);
+
     setFile(selectedFile);
   };
 
   const handleUpload = async () => {
-    console.log("handleUpload called. File:", file, "User ID:", id_user);
+
     if (!file) {
       setError("Please select a video to upload.");
       return;
@@ -47,20 +47,14 @@ function UploadVideo() {
       formData.append("userId", id_user);
 
       for (let [key, value] of formData.entries()) {
-        console.log("formData entry:", key, value);
+
       }
 
       try {
-        console.log("Sending POST request...");
-        const response = await axios.post("http://localhost:8080/api/ai/full-analysis", formData, {
-          headers: {
-            "Content-Type": "multipart/form-data",
-            Accept: "application/json",
-          },
-        });
-        console.log("Full response:", response.data);
+        const response = await uploadVideoAnalysis(id_user, formData);
+
         // Access the nested result
-        const apiResult = response.data.result?.result || {
+        const apiResult = response.result?.result || {
           summary: "No summary available.",
           performanceMetrics: { averageScore: 0, totalFrames: 0 },
           skill_level: "N/A",
@@ -79,7 +73,7 @@ function UploadVideo() {
 
         // Set flag để HomePage biết cần refresh bài học đề xuất
         localStorage.setItem('videoAnalysisComplete', 'true');
-        
+
         // Trigger storage event cho cùng tab
         window.dispatchEvent(new StorageEvent('storage', {
           key: 'videoAnalysisComplete',
@@ -89,9 +83,9 @@ function UploadVideo() {
         // Hiển thị thông báo cho user
         setShowNotification(true);
         setTimeout(() => setShowNotification(false), 5000); // Ẩn sau 5 giây
-        console.log("Video analysis completed successfully. Recommended lessons will be updated.");
+
       } catch (err) {
-        console.log("Error details:", err.response);
+
         let backendMsg = "";
         if (err.response?.data) {
           if (typeof err.response.data === "string") {
@@ -108,7 +102,7 @@ function UploadVideo() {
                     break;
                   }
                 } catch (e) {
-                  console.log(e);
+
                 }
               }
             }
@@ -139,7 +133,7 @@ function UploadVideo() {
   };
 
   if (result) {
-    console.log("Result structure:", JSON.stringify(result, null, 2));
+
   }
 
   return (
@@ -174,11 +168,10 @@ function UploadVideo() {
           <Button
             onClick={handleUpload}
             disabled={loading || !file}
-            className={`w-full px-6 py-3 rounded-lg transition-colors ${
-              loading || !file
-                ? "bg-gray-300 text-gray-500 cursor-not-allowed"
-                : "bg-blue-600 text-white hover:bg-blue-700"
-            }`}
+            className={`w-full px-6 py-3 rounded-lg transition-colors ${loading || !file
+              ? "bg-gray-300 text-gray-500 cursor-not-allowed"
+              : "bg-blue-600 text-white hover:bg-blue-700"
+              }`}
           >
             {loading ? "Processing..." : "Upload Video"}
           </Button>

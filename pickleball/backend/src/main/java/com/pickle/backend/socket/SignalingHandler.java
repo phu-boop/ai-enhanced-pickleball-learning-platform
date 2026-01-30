@@ -6,7 +6,9 @@ import org.springframework.web.socket.handler.TextWebSocketHandler;
 import java.net.URI;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
+import lombok.extern.slf4j.Slf4j;
 
+@Slf4j
 public class SignalingHandler extends TextWebSocketHandler {
 
     // Map<roomId, List of WebSocketSession>
@@ -24,7 +26,7 @@ public class SignalingHandler extends TextWebSocketHandler {
         rooms.computeIfAbsent(roomId, k -> ConcurrentHashMap.newKeySet()).add(session);
         sessionToRoom.put(session.getId(), roomId);
 
-        System.out.println("🟢 Kết nối mới: " + session.getId() + " vào phòng " + roomId);
+        log.info("🟢 Kết nối mới: {} vào phòng {}", session.getId(), roomId);
     }
 
     @Override
@@ -33,16 +35,16 @@ public class SignalingHandler extends TextWebSocketHandler {
         String roomId = sessionToRoom.get(senderId);
 
         if (roomId == null) {
-            System.out.println("⚠️ Không tìm thấy room cho session: " + senderId);
+            log.warn("⚠️ Không tìm thấy room cho session: {}", senderId);
             return;
         }
 
-        System.out.println("📩 [" + roomId + "] " + senderId + " gửi: " + message.getPayload());
+        log.debug("📩 [{}] {} gửi: {}", roomId, senderId, message.getPayload());
 
         for (WebSocketSession session : rooms.getOrDefault(roomId, Set.of())) {
             if (!session.getId().equals(senderId) && session.isOpen()) {
                 session.sendMessage(message);
-                System.out.println("📤 → Gửi đến " + session.getId());
+                log.debug("📤 → Gửi đến {}", session.getId());
             }
         }
     }
@@ -58,19 +60,21 @@ public class SignalingHandler extends TextWebSocketHandler {
                 roomSessions.remove(session);
                 if (roomSessions.isEmpty()) {
                     rooms.remove(roomId);
-                    System.out.println("🗑️ Phòng " + roomId + " đã trống, xóa khỏi bộ nhớ.");
+                    log.info("🗑️ Phòng {} đã trống, xóa khỏi bộ nhớ.", roomId);
                 }
             }
         }
 
-        System.out.println("❌ Ngắt kết nối: " + sessionId);
+        log.info("❌ Ngắt kết nối: {}", sessionId);
     }
 
     private String getRoomIdFromUri(URI uri) {
-        if (uri == null) return null;
+        if (uri == null)
+            return null;
 
         String query = uri.getQuery(); // ví dụ: roomId=abc123
-        if (query == null || !query.contains("roomId=")) return null;
+        if (query == null || !query.contains("roomId="))
+            return null;
 
         for (String param : query.split("&")) {
             if (param.startsWith("roomId=")) {

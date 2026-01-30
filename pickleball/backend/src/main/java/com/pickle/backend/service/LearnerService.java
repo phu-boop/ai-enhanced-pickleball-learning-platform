@@ -2,13 +2,13 @@ package com.pickle.backend.service;
 
 import com.pickle.backend.dto.LearnerDTO;
 import com.pickle.backend.dto.ScheduleDTO;
-import com.pickle.backend.entity.Coach;
+
 import com.pickle.backend.entity.Learner;
 import com.pickle.backend.entity.Session;
 import com.pickle.backend.entity.User;
 import com.pickle.backend.exception.ResourceNotFoundException;
 import com.pickle.backend.repository.LearnerRepository;
-import com.pickle.backend.repository.UserRepository;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -139,6 +139,7 @@ public class LearnerService {
         logger.info("Fetching learners with goal: {}", goal);
         return learnerRepository.findByGoalsContaining(goal);
     }
+
     public List<ScheduleDTO> getScheduleByleanerId(String learnerId) {
         Optional<Learner> learner = learnerRepository.findById(learnerId);
         if (learner.isPresent()) {
@@ -162,9 +163,9 @@ public class LearnerService {
         }
     }
 
-
     private ScheduleDTO.StatusSession mapToScheduleStatus(Session.Status status) {
-        if (status == null) return null;
+        if (status == null)
+            return null;
 
         switch (status) {
             case SCHEDULED:

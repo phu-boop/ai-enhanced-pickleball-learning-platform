@@ -5,11 +5,13 @@ import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+import lombok.extern.slf4j.Slf4j;
 
 import java.security.Key;
 import java.util.*;
 
 @Service
+@Slf4j
 public class JwtService {
 
     private static final long EXPIRATION_TIME = 86400000; // 1 ngày (ms)
@@ -24,7 +26,7 @@ public class JwtService {
 
     public String generateToken(String email, List<String> roles) {
         try {
-            System.out.println("Generating token for email: " + email + ", roles: " + roles);
+            log.debug("Generating token for email: {}, roles: {}", email, roles);
             String token = Jwts.builder()
                     .setClaims(Map.of("roles", roles))
                     .setSubject(email)
@@ -32,11 +34,10 @@ public class JwtService {
                     .setExpiration(new Date(System.currentTimeMillis() + EXPIRATION_TIME))
                     .signWith(key)
                     .compact();
-            System.out.println("Token generated: " + token);
+            log.trace("Token generated");
             return token;
         } catch (Exception e) {
-            System.err.println("Error generating token: " + e.getMessage());
-            e.printStackTrace();
+            log.error("Error generating token: ", e);
             throw new RuntimeException("Failed to generate JWT token", e);
         }
     }
@@ -49,8 +50,7 @@ public class JwtService {
                     .parseClaimsJws(token)
                     .getBody();
         } catch (Exception e) {
-            System.err.println("Error extracting claims from token: " + e.getMessage());
-            e.printStackTrace();
+            log.error("Error extracting claims from token: ", e);
             throw new RuntimeException("Failed to extract claims from token", e);
         }
     }
@@ -68,8 +68,7 @@ public class JwtService {
         try {
             return extractAllClaims(token).getExpiration().before(new Date());
         } catch (Exception e) {
-            System.err.println("Error checking token expiration: " + e.getMessage());
-            e.printStackTrace();
+            log.error("Error checking token expiration: ", e);
             throw new RuntimeException("Failed to check token expiration", e);
         }
     }
@@ -79,8 +78,7 @@ public class JwtService {
             final String extractedEmail = extractUsername(token);
             return (extractedEmail.equals(email) && !isTokenExpired(token));
         } catch (Exception e) {
-            System.err.println("Error validating token: " + e.getMessage());
-            e.printStackTrace();
+            log.error("Error validating token: ", e);
             return false;
         }
     }

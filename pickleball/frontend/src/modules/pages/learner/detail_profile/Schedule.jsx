@@ -113,7 +113,6 @@ const navigate = useNavigate();
 const Schedule = () => {
   const [user, setUser] = useState(null);
   const [scheduleList, setScheduleList] = useState([]);
-  console.log(user);
   useEffect(() => {
     const fetchData = async () => {
       try {

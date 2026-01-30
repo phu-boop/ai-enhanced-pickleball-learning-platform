@@ -59,7 +59,7 @@ const EditCoach = () => {
                 level: coach.level
             };
 
-            console.log("Sending data:", coachData); // Log dữ liệu trước khi gửi
+
 
             const response = await updateCoach(userId, coachData);
             if (response.status === 200) {

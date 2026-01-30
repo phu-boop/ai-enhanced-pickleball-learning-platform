@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import lombok.Data;
+import lombok.extern.slf4j.Slf4j;
 
 import java.io.IOException;
 import java.util.List;
@@ -18,6 +19,7 @@ import java.util.Map;
 
 @RestController
 @RequestMapping("/api/ai")
+@Slf4j
 public class VideoAnalysisController {
 
     @Autowired
@@ -34,10 +36,12 @@ public class VideoAnalysisController {
             @RequestParam String userId,
             @RequestParam(value = "video", required = false) MultipartFile video,
             @RequestParam(value = "selfAssessedLevel", required = false) String selfAssessedLevel) {
-        System.out.println("Received request - video: " + (video != null ? video.getOriginalFilename() : "null")
-                + ", userId: " + userId + ", video size: " + (video != null ? video.getSize() : 0)
-                + ", content type: " + (video != null ? video.getContentType() : "null")
-                + ", selfAssessedLevel: " + selfAssessedLevel);
+        log.info("Received request - video: {}, userId: {}, video size: {}, content type: {}, selfAssessedLevel: {}",
+                (video != null ? video.getOriginalFilename() : "null"),
+                userId,
+                (video != null ? video.getSize() : 0),
+                (video != null ? video.getContentType() : "null"),
+                selfAssessedLevel);
 
         if (video == null && selfAssessedLevel == null) {
             return ResponseEntity.badRequest()
@@ -54,20 +58,20 @@ public class VideoAnalysisController {
 
         try {
             Map<String, Object> result = fullAnalysisService.analyze(userId, video);
-            System.out.println("Result from service: " + result);
+            log.info("Result from service: {}", result);
             if (result == null || (result.containsKey("message")
                     && result.get("message").toString().contains("không thành công"))) {
                 String errorMessage = (String) result.getOrDefault("message", "Phân tích video không thành công");
-                System.out.println("Error result: " + errorMessage);
+                log.warn("Error result: {}", errorMessage);
                 return ResponseEntity.badRequest().body(new VideoAnalysisResponse(errorMessage));
             }
             return ResponseEntity.ok(new VideoAnalysisResponse("Phân tích thành công", result));
         } catch (IOException e) {
-            System.err.println("IO Error in fullAnalysis: " + e.getMessage());
+            log.error("IO Error in fullAnalysis: {}", e.getMessage());
             return ResponseEntity.status(400).body(
                     new VideoAnalysisResponse("Phân tích không thành công: Lỗi xử lý file - " + e.getMessage()));
         } catch (Exception e) {
-            System.err.println("Unexpected error in fullAnalysis: " + e.getMessage());
+            log.error("Unexpected error in fullAnalysis: ", e);
             return ResponseEntity.status(500)
                     .body(new VideoAnalysisResponse("Phân tích không thành công: " + e.getMessage()));
         }

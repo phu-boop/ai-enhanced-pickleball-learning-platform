@@ -3,7 +3,7 @@ import apiClient from './apiClient';
 // Hàm gọi API /hello
 export default async function ApiRegister(name, email, password) {
   try {
-    const response = await apiClient.post('api/users/register',{name, email, password});
+    const response = await apiClient.post('api/users/register', { name, email, password });
     return response.data;
   } catch (error) {
     console.error('Lỗi khi gọi API /register:', error);
@@ -17,6 +17,36 @@ export async function ApiLogin(email, password) {
     return response.data;
   } catch (error) {
     console.error('Lỗi khi gọi API /login:', error);
+    throw error;
+  }
+}
+
+export async function forgotPassword(email) {
+  try {
+    const response = await apiClient.post('api/users/forgot-password', null, { params: { email } });
+    return response.data;
+  } catch (error) {
+    console.error('Lỗi khi gọi API /forgot-password:', error);
+    throw error;
+  }
+}
+
+export async function verifyOTP(email, otp) {
+  try {
+    const response = await apiClient.post('api/users/verify-otp', null, { params: { email, otp } });
+    return response.data;
+  } catch (error) {
+    console.error('Lỗi khi gọi API /verify-otp:', error);
+    throw error;
+  }
+}
+
+export async function resetPassword(email, newPassword) {
+  try {
+    const response = await apiClient.post('api/users/reset-password', { email, newPassword });
+    return response.data;
+  } catch (error) {
+    console.error('Lỗi khi gọi API /reset-password:', error);
     throw error;
   }
 }

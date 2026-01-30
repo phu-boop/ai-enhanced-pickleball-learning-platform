@@ -19,8 +19,8 @@ public class DebtDetailDTO {
 
         // Khởi tạo nested DTO từ entity liên quan
         this.coach = debt.getCoach() != null ? new CoachDTO(debt.getCoach()) : null;
-        if(debt.getLearner() != null) {
-            System.out.println("okok");
+        if (debt.getLearner() != null) {
+
             this.learner = new LearnerDTO();
             this.learner.setUserName(debt.getLearner().getUser().getName());
             this.learner.setGoals(debt.getLearner().getGoals());
@@ -31,21 +31,51 @@ public class DebtDetailDTO {
     }
 
     // getter và setter cho tất cả trường
-    public Long getId() { return id; }
-    public void setId(Long id) { this.id = id; }
+    public Long getId() {
+        return id;
+    }
 
-    public BigDecimal getAmount() { return amount; }
-    public void setAmount(BigDecimal amount) { this.amount = amount; }
+    public void setId(Long id) {
+        this.id = id;
+    }
 
-    public DebtDTO.DebtStatus getStatus() { return status; }
-    public void setStatus(DebtDTO.DebtStatus status) { this.status = status; }
+    public BigDecimal getAmount() {
+        return amount;
+    }
 
-    public CoachDTO getCoach() { return coach; }
-    public void setCoach(CoachDTO coach) { this.coach = coach; }
+    public void setAmount(BigDecimal amount) {
+        this.amount = amount;
+    }
 
-    public LearnerDTO getLearner() { return learner; }
-    public void setLearner(LearnerDTO learner) { this.learner = learner; }
+    public DebtDTO.DebtStatus getStatus() {
+        return status;
+    }
 
-    public SessionResponseDTO getSession() { return session; }
-    public void setSession(SessionResponseDTO session) { this.session = session; }
+    public void setStatus(DebtDTO.DebtStatus status) {
+        this.status = status;
+    }
+
+    public CoachDTO getCoach() {
+        return coach;
+    }
+
+    public void setCoach(CoachDTO coach) {
+        this.coach = coach;
+    }
+
+    public LearnerDTO getLearner() {
+        return learner;
+    }
+
+    public void setLearner(LearnerDTO learner) {
+        this.learner = learner;
+    }
+
+    public SessionResponseDTO getSession() {
+        return session;
+    }
+
+    public void setSession(SessionResponseDTO session) {
+        this.session = session;
+    }
 }

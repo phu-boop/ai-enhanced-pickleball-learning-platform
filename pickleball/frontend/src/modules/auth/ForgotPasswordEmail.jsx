@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { forgotPassword } from '../../api/auth';
 
 const ForgotPasswordEmail = () => {
     const [email, setEmail] = useState('');
@@ -9,21 +10,12 @@ const ForgotPasswordEmail = () => {
     const handleSubmit = async (e) => {
         e.preventDefault();
         try {
-            const response = await fetch('http://localhost:8080/api/users/forgot-password', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ email }),
-            });
-            const data = await response.text();
-            if (response.ok) {
-                localStorage.setItem('resetEmail', email); // Lưu email vào localStorage
-                navigate('/auth/enter-otp');
-            } else {
-                setError(data); // Hiển thị thông báo lỗi từ backend
-            }
+            await forgotPassword(email);
+            localStorage.setItem('resetEmail', email); // Lưu email vào localStorage
+            navigate('/auth/enter-otp');
         } catch (error) {
             console.error(error);
-            setError('Đã xảy ra lỗi, vui lòng thử lại.');
+            setError(error.response?.data || 'Đã xảy ra lỗi, vui lòng thử lại.');
         }
     };
 

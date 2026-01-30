@@ -28,7 +28,6 @@ const WeeklySchedule = ({ scheduleList, id_coach, coachLevel }) => {
         feedback: null,
         pakage:selectedPackage.pakage,
       };
-      console.log('Creating session with data:', sessionData);
       Swal.fire({
         title: 'Confirm Booking',
         text: `Do you want to book the ${selectedPackage.title} on ${schedule}?`,

@@ -28,7 +28,7 @@ export default function InputAssessment() {
         </Button>
       </div>
       <QuizForm onSubmit={(data) => {
-        console.log("Quiz Data Submitted:", data);
+
         navigate("/quiz");
       }} />
     </div>
@@ -51,7 +51,7 @@ function QuizForm() {
     "goals": goal,
     "progress": "Just started",
   };
-  console.log("Data to send:", data, "Token:", token); // Debug token
+
 
   const handleSubmit = async () => {
     if (!experience || !goal) {

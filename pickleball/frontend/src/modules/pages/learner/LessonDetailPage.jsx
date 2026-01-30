@@ -29,7 +29,7 @@ const LessonDetailPage = ({ userId }) => {
   const complete = async () => {
     try {
       const response = await updateLessonComplete(idProgress);
-      console.log('Update complete response:', response);
+
       setCompleteProgress(true);
     } catch (error) {
       console.error('Error updating completion:', error);
@@ -42,7 +42,7 @@ const LessonDetailPage = ({ userId }) => {
       const response = await checkCompleted(input);
       setCompleteProgress(response.data.isExist);
     } catch (e) {
-      console.log(e);
+
     }
   };
 
@@ -179,7 +179,7 @@ const LessonDetailPage = ({ userId }) => {
         // Dọn dẹp interval khi player dừng hoặc tạm dừng
         const checkState = () => {
           if (playerRef.current &&
-             (playerRef.current.getPlayerState() === window.YT.PlayerState.PAUSED ||
+            (playerRef.current.getPlayerState() === window.YT.PlayerState.PAUSED ||
               playerRef.current.getPlayerState() === window.YT.PlayerState.ENDED)) {
             clearInterval(interval);
           }
@@ -226,9 +226,8 @@ const LessonDetailPage = ({ userId }) => {
 
           <div className="flex items-center gap-2 text-sm text-gray-700">
             <FaCheckCircle
-              className={`text-lg ${
-                watchedDuration >= lesson.durationSeconds * 0.9 ? 'text-green-500' : 'text-gray-400'
-              }`}
+              className={`text-lg ${watchedDuration >= lesson.durationSeconds * 0.9 ? 'text-green-500' : 'text-gray-400'
+                }`}
             />
             Đã xem: {watchedDuration} / {lesson.durationSeconds} giây
             {watchedDuration >= lesson.durationSeconds * 0.9 && !completeProgress && (

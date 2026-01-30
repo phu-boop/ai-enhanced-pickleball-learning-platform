@@ -20,7 +20,7 @@ export default function CoachBookingPage() {
         setCoaches(response);
         setLoading(false);
       } catch (err) {
-        console.log('Lỗi khi gọi API:', err);
+
         setError('Không thể tải danh sách huấn luyện viên');
         setLoading(false);
       }
@@ -49,7 +49,7 @@ export default function CoachBookingPage() {
         videoLink: null,
         feedback: null,
       };
-      console.log('Đặt lịch với dữ liệu:', sessionData);
+
       await createSession(sessionData);
       alert('Đặt lịch thành công!');
       setIsModalOpen(false);

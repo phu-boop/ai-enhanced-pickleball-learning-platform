@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import CourseCard from './learner/CourseCard';
+import { analyzePose } from '../../api/aiService';
 
 const AiVideo = () => {
     const [selectedFile, setSelectedFile] = useState(null);
@@ -31,15 +32,12 @@ const AiVideo = () => {
 
         try {
             setLoading(true);
-            const res = await fetch('http://localhost:8000/analyze', {
-                method: 'POST',
-                body: formData,
-            });
+            const data = await analyzePose(selectedFile);
 
-            const data = await res.json();
-            console.log(data);
+
             if (data.status === 'success') {
-                setResultUrl(`http://localhost:8000${data.video_url}`);
+                const baseUrl = import.meta.env.VITE_AI_SERVICE_URL || 'http://localhost:8090';
+                setResultUrl(`${baseUrl}${data.video_url}`);
                 setDetails(data.details);
                 setDetectedShots(data.detected_shots || []);
                 setRecommendedCourses(data.recommended_courses || []);
@@ -74,11 +72,10 @@ const AiVideo = () => {
                         <button
                             type="submit"
                             disabled={loading}
-                            className={`px-6 py-3 rounded-lg text-white font-semibold ${
-                                loading
-                                    ? 'bg-gray-400 cursor-not-allowed'
-                                    : 'bg-blue-600 hover:bg-blue-700'
-                            } transition duration-200`}
+                            className={`px-6 py-3 rounded-lg text-white font-semibold ${loading
+                                ? 'bg-gray-400 cursor-not-allowed'
+                                : 'bg-blue-600 hover:bg-blue-700'
+                                } transition duration-200`}
                         >
                             {loading ? 'Đang xử lý...' : 'Phân tích Video'}
                         </button>

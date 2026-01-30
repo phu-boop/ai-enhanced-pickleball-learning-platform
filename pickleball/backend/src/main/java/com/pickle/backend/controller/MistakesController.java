@@ -18,16 +18,16 @@ public class MistakesController {
         this.mistakesService = mistakesService;
     }
 
-    // Tạo một bản ghi lỗi mới bằng dữ liệu yêu cầu được cung cấp và trả về bản ghi lỗi đã tạo
+    // Tạo một bản ghi lỗi mới bằng dữ liệu yêu cầu được cung cấp và trả về bản ghi
+    // lỗi đã tạo
     @PostMapping
     public ResponseEntity<Mistakes> createMistake(@RequestBody MistakesRequest request) {
-        System.out.println("ok bạn");
+
         Mistakes mistake = mistakesService.createMistake(
-            request.getTitle(),
-            request.getDescription(),
-            request.getStatus(),
-            request.getUserId()
-        );
+                request.getTitle(),
+                request.getDescription(),
+                request.getStatus(),
+                request.getUserId());
         return ResponseEntity.ok(mistake);
     }
 
@@ -42,19 +42,19 @@ public class MistakesController {
     public ResponseEntity<Mistakes> getMistakeById(@PathVariable int id) {
         Optional<Mistakes> mistake = mistakesService.getMistakeById(id);
         return mistake.map(ResponseEntity::ok)
-                     .orElseGet(() -> ResponseEntity.notFound().build());
+                .orElseGet(() -> ResponseEntity.notFound().build());
     }
 
-    // Cập nhật một bản ghi lỗi hiện có bằng ID(id mistakes) và dữ liệu yêu cầu được cung cấp, trả về bản ghi lỗi đã cập nhật
+    // Cập nhật một bản ghi lỗi hiện có bằng ID(id mistakes) và dữ liệu yêu cầu được
+    // cung cấp, trả về bản ghi lỗi đã cập nhật
     @PutMapping("/{id}")
     public ResponseEntity<Mistakes> updateMistake(@PathVariable int id, @RequestBody MistakesRequest request) {
         Mistakes updatedMistake = mistakesService.updateMistake(
-            id,
-            request.getTitle(),
-            request.getDescription(),
-            request.getStatus(),
-            request.getUserId()
-        );
+                id,
+                request.getTitle(),
+                request.getDescription(),
+                request.getStatus(),
+                request.getUserId());
         return ResponseEntity.ok(updatedMistake);
     }
 

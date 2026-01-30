@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
-import { fetchCoachById, fetchLearnerById, getSessionbyCoach,updateStatus } from '../../../api/coach/Service';
+import { fetchCoachById, fetchLearnerById, getSessionbyCoach, updateStatus } from '../../../api/coach/Service';
 import { Navigate, useNavigate } from 'react-router-dom';
-import {updateavata} from "../../../api/user/update.js";
+import { updateavata } from "../../../api/user/update.js";
 export default function CoachDashboard() {
   const [coach, setCoach] = useState(null);
   const [scheduleList, setScheduleList] = useState([]);
@@ -11,7 +11,7 @@ export default function CoachDashboard() {
   const [error, setError] = useState(null);
   const [selectedSession, setSelectedSession] = useState(null);
   const todayDay = new Date().toLocaleDateString('en-US', { weekday: 'long' });
-  console.log('lich',scheduleList);
+
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -28,13 +28,13 @@ export default function CoachDashboard() {
 
         // Fetch learner names for each unique learnerId
         const learnerIds = [...new Set(sessionData.map(session => session.learnerId).filter(id => id))];
-        console.log('Fetching learner names for IDs:', learnerIds);
+
         const learnerPromises = learnerIds.map(id =>
           fetchLearnerById(id)
             .then(result => {
-              console.log(`Learner ${id} fetched:`, result);
+
               if (id === "88c3c563-877a-4d61-8ab2-74ca93547eb5") {
-                console.log('Specific check for ID 88c3c563-877a-4d61-8ab2-74ca93547eb5:', result);
+
               }
               const name = result?.name || result?.userName || result?.fullName || '(ID: ' + id + ')';
               return { id, name };
@@ -78,16 +78,16 @@ export default function CoachDashboard() {
   };
 
   const todaySchedule = scheduleList
-  .filter(session => session.datetime?.startsWith(todayDay))
-  .map(session => ({
-    sessionId: session.sessionId || 'N/A',
-    timeRange: session.datetime?.split(' ').slice(1).join(' ') || 'N/A',
-    day: session.datetime?.split(' ')[0] || 'N/A',
-    learner: learnerNames[session.learnerId] || '(ID: ' + (session.learnerId || 'N/A') + ')',
-    status: mapStatus(session.status),
-    feedback: session.feedback || 'None',
-    videoLink: session.videoLink || null
-  }));
+    .filter(session => session.datetime?.startsWith(todayDay))
+    .map(session => ({
+      sessionId: session.sessionId || 'N/A',
+      timeRange: session.datetime?.split(' ').slice(1).join(' ') || 'N/A',
+      day: session.datetime?.split(' ')[0] || 'N/A',
+      learner: learnerNames[session.learnerId] || '(ID: ' + (session.learnerId || 'N/A') + ')',
+      status: mapStatus(session.status),
+      feedback: session.feedback || 'None',
+      videoLink: session.videoLink || null
+    }));
 
   // Process learner data
   const formattedLearners = learners.map(learner => ({
@@ -103,15 +103,15 @@ export default function CoachDashboard() {
     setSelectedSession(session);
   };
   // oppen class
-  const handleOppenClass = async(id_session) =>{
-    try{
+  const handleOppenClass = async (id_session) => {
+    try {
       const response = await updateStatus(id_session);
-      if(response){
-      navegative(`/coach_video_call/${id_session}`);
+      if (response) {
+        navegative(`/coach_video_call/${id_session}`);
       }
-      
-    }catch(e){
-      console.log(e);
+
+    } catch (e) {
+
     }
   }
   // Close modal
@@ -142,12 +142,12 @@ export default function CoachDashboard() {
           <p className="text-sm mb-1 text-[#162556]">Certifications: <strong>{coach?.certifications?.join(', ') || 'N/A'}</strong></p>
           <p className="text-gray-600 text-sm">Today's Schedule: <strong>{todaySchedule.length} sessions</strong> | Learners: <strong>{learners.length}</strong></p>
         </div>
-        <button className="cursor-pointer" onClick={()=>{navegative("/profile")}}>
+        <button className="cursor-pointer" onClick={() => { navegative("/profile") }}>
           <img
-              src={coach?.urlAvata || "https://i.pinimg.com/736x/c6/e5/65/c6e56503cfdd87da299f72dc416023d4.jpg"}
-              alt="Coach Avatar"
-              className="w-20 h-20 rounded-full object-cover border-4 border-blue-100 shadow-md"
-              onError={(e) => { e.target.src = "https://i.pinimg.com/736x/c6/e5/65/c6e56503cfdd87da299f72dc416023d4.jpg"; }}
+            src={coach?.urlAvata || "https://i.pinimg.com/736x/c6/e5/65/c6e56503cfdd87da299f72dc416023d4.jpg"}
+            alt="Coach Avatar"
+            className="w-20 h-20 rounded-full object-cover border-4 border-blue-100 shadow-md"
+            onError={(e) => { e.target.src = "https://i.pinimg.com/736x/c6/e5/65/c6e56503cfdd87da299f72dc416023d4.jpg"; }}
           />
         </button>
       </div>
@@ -196,24 +196,23 @@ export default function CoachDashboard() {
                       <td className="py-3 px-6">Thursday</td>
                       <td className="py-3 px-6">{item.timeRange}</td>
                       <td className="py-3 px-6">
-                        <span className={`inline-block px-3 py-1 rounded-full text-xs font-medium ${
-                          item.status === 'Empty'
+                        <span className={`inline-block px-3 py-1 rounded-full text-xs font-medium ${item.status === 'Empty'
                             ? 'bg-gray-100 text-gray-600'
                             : item.status === 'Confirmed'
-                            ? 'bg-yellow-100 text-yellow-700'
-                            : 'bg-green-100 text-green-700'
-                        }`}>
+                              ? 'bg-yellow-100 text-yellow-700'
+                              : 'bg-green-100 text-green-700'
+                          }`}>
                           {item.status}
                         </span>
                       </td>
                       <td className="py-3 px-6">{item.feedback}</td>
                       <td className="py-3 px-6">
-                        <button onClick={()=>{handleOppenClass(item.sessionId)}} className= 'font-bold text-amber-50 text-xs font-medium py-1 px-2 bg-amber-600 cursor-pointer font-black rounded-xl shadow-md hover:bg-amber-700 transition duration-200 transform hover:-translate-y-1'>
-                        oppen class
+                        <button onClick={() => { handleOppenClass(item.sessionId) }} className='font-bold text-amber-50 text-xs font-medium py-1 px-2 bg-amber-600 cursor-pointer font-black rounded-xl shadow-md hover:bg-amber-700 transition duration-200 transform hover:-translate-y-1'>
+                          oppen class
                         </button>
                       </td>
                       <td className="py-3 px-6">
-                        <button 
+                        <button
                           onClick={() => handleViewDetails(item)}
                           className="text-blue-600 hover:text-blue-800 font-medium text-xs py-1 px-2 bg-blue-100 cursor-pointer rounded-xl shadow-md hover:bg-blue-200 transition duration-200 transform hover:-translate-y-1"
                         >
@@ -237,7 +236,7 @@ export default function CoachDashboard() {
             <div className="text-gray-500 text-center py-6">
               <p className="text-base font-medium">No learners found</p>
               <p className="text-sm mt-2">Click "Add Learner" to start managing learners!</p>
-              <button 
+              <button
                 onClick={() => alert('Redirect to add learner page (not implemented)')}
                 className="mt-4 bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-xl shadow-md transform hover:-translate-y-1 transition-all duration-200"
               >
@@ -286,14 +285,14 @@ export default function CoachDashboard() {
             <p className="text-gray-600 text-sm mb-2"><strong>Notes:</strong> {selectedSession.feedback}</p>
             {selectedSession.videoLink && (
               <p className="text-gray-600 text-sm mb-2">
-                <strong>Video Link:</strong> 
+                <strong>Video Link:</strong>
                 <a href={selectedSession.videoLink} target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:underline">
                   Open Link
                 </a>
               </p>
             )}
             <div className="flex justify-end gap-2 mt-4">
-              <button 
+              <button
                 onClick={closeModal}
                 className="bg-gray-500 hover:bg-gray-600 text-white px-4 py-2 rounded-xl"
               >
@@ -306,13 +305,13 @@ export default function CoachDashboard() {
 
       {/* Action Buttons */}
       <div className="flex flex-wrap gap-4">
-        <button onClick={()=>{navegative(`/Detail_coach/${sessionStorage.getItem('id_user')}`)}} className="bg-[#696cff] hover:bg-[#4445a0] text-white cursor-pointer px-6 py-3 rounded-xl shadow-md transform hover:-translate-y-1 transition-all duration-200">
+        <button onClick={() => { navegative(`/Detail_coach/${sessionStorage.getItem('id_user')}`) }} className="bg-[#696cff] hover:bg-[#4445a0] text-white cursor-pointer px-6 py-3 rounded-xl shadow-md transform hover:-translate-y-1 transition-all duration-200">
           Manage Schedule
         </button>
-        <button onClick={()=>{navegative('/coach')}} className="bg-[#82e14f] hover:bg-[#548f35] text-white cursor-pointer px-6 py-3 rounded-xl shadow-md transform hover:-translate-y-1 transition-all duration-200">
+        <button onClick={() => { navegative('/coach') }} className="bg-[#82e14f] hover:bg-[#548f35] text-white cursor-pointer px-6 py-3 rounded-xl shadow-md transform hover:-translate-y-1 transition-all duration-200">
           View Reports
         </button>
-        <button onClick={()=>{navegative('/profile')}} className="bg-[#3dacce] hover:bg-[#3a849b] text-white cursor-pointer px-6 py-3 rounded-xl shadow-md transform hover:-translate-y-1 transition-all duration-200">
+        <button onClick={() => { navegative('/profile') }} className="bg-[#3dacce] hover:bg-[#3a849b] text-white cursor-pointer px-6 py-3 rounded-xl shadow-md transform hover:-translate-y-1 transition-all duration-200">
           Update Profile
         </button>
       </div>

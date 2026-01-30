@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { fetchQuestion, createQuestion, deleteQuestion } from "../../../api/admin/test"; 
+import { fetchQuestion, createQuestion, deleteQuestion } from "../../../api/admin/test";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faPencil, faTrash, faSearch, faFileCirclePlus, faRectangleList } from '@fortawesome/free-solid-svg-icons';
 import { useNavigate } from "react-router-dom";
@@ -105,8 +105,8 @@ export default function Tests() {
       alert("Failed to create question. Please try again.");
     }
   };
-  
-      console.log("Question" + sessionStorage.getItem("token"));   
+
+
   const handleEdit = (id) => {
     navigate(`/admin/tests/edit/${id}`);
   };

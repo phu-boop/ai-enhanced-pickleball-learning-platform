@@ -7,7 +7,6 @@ import "font-awesome/css/font-awesome.min.css";
 const Courts = () => {
   const navigate = useNavigate();
   const [user, setUser] = useState(null);
-    console.log(user);
   useEffect(() => {
     const fetchUser = async () => {
       try {

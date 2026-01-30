@@ -45,10 +45,9 @@ public class EmailService {
             helper.addInline("logoImage", new ClassPathResource("static/images/logo.png"));
 
             mailSender.send(message);
-            System.out.println("OTP email sent successfully to: " + to);
+
         } catch (MessagingException e) {
             System.err.println("Failed to send OTP email to " + to + ": " + e.getMessage());
         }
     }
 }
-

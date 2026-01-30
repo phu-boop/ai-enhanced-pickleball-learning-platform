@@ -14,9 +14,8 @@ import com.pickle.backend.repository.SessionRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
+
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.support.SessionStatus;
 
 import java.math.BigDecimal;
 import java.util.List;
@@ -132,6 +131,7 @@ public class SessionService {
             return sessionRepository.save(session);
         }).orElseThrow(() -> new ResourceNotFoundException("Session not found with id " + sessionId));
     }
+
     public Session updateStatusSession(String sessionId) {
         logger.info("Updating status session with id: {}", sessionId);
         return sessionRepository.findById(sessionId).map(session -> {
@@ -139,6 +139,7 @@ public class SessionService {
             return sessionRepository.save(session);
         }).orElseThrow(() -> new ResourceNotFoundException("Session not found with id " + sessionId));
     }
+
     public void deleteSession(String sessionId) {
         logger.info("Deleting session with id: {}", sessionId);
         if (!sessionRepository.existsById(sessionId)) {
@@ -173,6 +174,7 @@ public class SessionService {
         logger.info("Found {} learners for coachId: {}", learnerDTOs.size(), coachId);
         return learnerDTOs;
     }
+
     private LearnerDTO convertToLearnerDTO(Learner learner) {
         LearnerDTO dto = new LearnerDTO();
         dto.setId(learner.getUserId());
@@ -182,13 +184,15 @@ public class SessionService {
         dto.setProgress(learner.getProgress());
         return dto;
     }
+
     private SessionResponseDTO convertToSessionResponseDTO(Session session) {
         SessionResponseDTO dto = new SessionResponseDTO(session);
         return dto;
     }
+
     public List<SessionResponseDTO> getSessionBycoachId(String coachId) {
         logger.info("Fetching sessions with CoachId: {}", coachId);
         List<Session> sessions = sessionRepository.findByCoachUserId(coachId);
-        return  sessions.stream().map(this::convertToSessionResponseDTO).collect(Collectors.toList());
+        return sessions.stream().map(this::convertToSessionResponseDTO).collect(Collectors.toList());
     }
 }

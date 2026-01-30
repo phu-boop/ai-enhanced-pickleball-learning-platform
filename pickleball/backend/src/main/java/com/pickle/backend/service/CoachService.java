@@ -32,6 +32,7 @@ public class CoachService {
 
     @Autowired
     private SessionService sessionService;
+
     public String confirmCoachById(String id) {
         Optional<Coach> optionalCoach = coachRepository.findById(id);
         logger.info("start");
@@ -66,8 +67,9 @@ public class CoachService {
 
     @Autowired
     private UserRepository userRepository;
+
     public Optional<Coach> getCoachById(String coachId) {
-        System.out.println("Fetching coach with id: " + coachId);
+
         return coachRepository.findById(coachId);
     }
 
@@ -79,7 +81,8 @@ public class CoachService {
 
         User savedUser;
         if (existingUser.isPresent()) {
-            logger.info("User with email {} already exists, userId: {}", userDetails.getEmail(), existingUser.get().getUserId());
+            logger.info("User with email {} already exists, userId: {}", userDetails.getEmail(),
+                    existingUser.get().getUserId());
             // Tái truy vấn User để đảm bảo trạng thái managed
             savedUser = userRepository.findByEmail(userDetails.getEmail())
                     .orElseThrow(() -> new RuntimeException("User not found with email: " + userDetails.getEmail()));
@@ -124,25 +127,25 @@ public class CoachService {
                 savedCoach.getUserId(), savedCoach.getUser().getEmail());
         return savedCoach;
     }
-    public Coach updateCoach(String coachId, Coach coachDetails) {
-    logger.info("Updating coach with id: {}", coachId);
-    return coachRepository.findById(coachId).map(coach -> {
-        if (coachDetails.getCertifications() != null) {
-            coach.setCertifications(coachDetails.getCertifications());
-        }
-        if (coachDetails.getAvailability() != null) {
-            coach.setAvailability(coachDetails.getAvailability());
-        }
-        if (coachDetails.getSpecialties() != null) {
-            coach.setSpecialties(coachDetails.getSpecialties());
-        }
-        if (coachDetails.getLevel() != null) {
-            coach.setLevel(coachDetails.getLevel());
-        }
-        return coachRepository.save(coach);
-    }).orElseThrow(() -> new ResourceNotFoundException("Coach not found with id " + coachId));
-}
 
+    public Coach updateCoach(String coachId, Coach coachDetails) {
+        logger.info("Updating coach with id: {}", coachId);
+        return coachRepository.findById(coachId).map(coach -> {
+            if (coachDetails.getCertifications() != null) {
+                coach.setCertifications(coachDetails.getCertifications());
+            }
+            if (coachDetails.getAvailability() != null) {
+                coach.setAvailability(coachDetails.getAvailability());
+            }
+            if (coachDetails.getSpecialties() != null) {
+                coach.setSpecialties(coachDetails.getSpecialties());
+            }
+            if (coachDetails.getLevel() != null) {
+                coach.setLevel(coachDetails.getLevel());
+            }
+            return coachRepository.save(coach);
+        }).orElseThrow(() -> new ResourceNotFoundException("Coach not found with id " + coachId));
+    }
 
     public void deleteCoach(String coachId) {
         logger.info("Deleting coach with id: {}", coachId);

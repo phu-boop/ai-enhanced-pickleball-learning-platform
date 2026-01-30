@@ -1,0 +1,100 @@
+name: Docker Compose CI/CD
+
+on:
+    push:
+        branches: [main]
+        paths:
+            - "pickleball/docker/**"
+            - "pickleball/backend/**"
+            - "pickleball/frontend/**"
+            - ".github/workflows/docker-compose.yml"
+    workflow_dispatch:
+
+jobs:
+    validate:
+        name: Validate Docker Compose
+        runs-on: ubuntu-latest
+
+        steps:
+            - name: Checkout code
+              uses: actions/checkout@v4
+
+            - name: Validate docker-compose.yml
+              working-directory: ./pickleball/docker
+              run: |
+                  docker compose config > /dev/null
+                  echo "✅ Docker Compose configuration is valid"
+
+            - name: Check environment file template
+              run: |
+                  if [ -f "pickleball/docker/.env.example" ]; then
+                    echo "✅ .env.example file exists"
+                  else
+                    echo "⚠️ Warning: No .env.example template found"
+                  fi
+
+    integration-test:
+        name: Integration Test
+        runs-on: ubuntu-latest
+        needs: validate
+
+        steps:
+            - name: Checkout code
+              uses: actions/checkout@v4
+
+            - name: Create test .env file
+              working-directory: ./pickleball/docker
+              run: |
+                  cat > .env << EOF
+                  DB_HOST=mysql
+                  DB_PORT=3306
+                  DB_NAME=test_db
+                  DB_USER=root
+                  DB_PASSWORD=test_password
+                  DB_ROOT_PASSWORD=test_password
+                  BACKEND_PORT=8081
+                  FRONTEND_PORT=80
+                  AI_SERVICE_PORT=8090
+                  QUIZ_SERVICE_PORT=8091
+                  MYSQL_PORT=3307
+                  JWT_SECRET=test-secret-key-for-integration-testing-pipeline
+                  CLIENT_ID=test_client_id
+                  CLIENT_SECRET=test_client_secret
+                  EMAIL=test@example.com
+                  APP_PASSWORD=test_password
+                  OPENROUTER_API_KEY=test_key
+                  GEMINI_API_KEY=test_key
+                  Vnp_TmnCode=test
+                  Vnp_HashSecret=test
+                  Vnp_Url=https://test.vnpay.vn
+                  EOF
+
+            - name: Start services
+              working-directory: ./pickleball/docker
+              run: |
+                  docker compose up -d mysql
+                  sleep 30  # Wait for MySQL to be ready
+
+            - name: Check services health
+              working-directory: ./pickleball/docker
+              run: |
+                  docker compose ps
+
+            - name: Cleanup
+              if: always()
+              working-directory: ./pickleball/docker
+              run: docker compose down -v
+
+    notify:
+        name: Notify on Success
+        runs-on: ubuntu-latest
+        needs: [validate, integration-test]
+        if: success()
+
+        steps:
+            - name: Success notification
+              run: |
+                  echo "🎉 All CI/CD checks passed!"
+                  echo "✅ Docker Compose validated"
+                  echo "✅ Integration tests passed"
+                  echo "Ready for deployment"

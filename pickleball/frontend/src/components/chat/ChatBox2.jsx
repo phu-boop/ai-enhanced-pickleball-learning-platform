@@ -21,9 +21,8 @@ const OPENROUTER_MODELS = [
   { value: "anthropic/claude-3-haiku", label: "Claude 3 Haiku" }
 ];
 
-export default function ChatBox2() {  
-  const apiKey = "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";
-  console.log("key",apiKey);
+export default function ChatBox2() {
+  const apiKey = import.meta.env.VITE_OPENROUTER_API_KEY;
   const [open, setOpen] = useState(false);
   const [tab, setTab] = useState("chat");
   const [messages, setMessages] = useState([
@@ -33,7 +32,7 @@ export default function ChatBox2() {
   const [input, setInput] = useState("");
   const [loading, setLoading] = useState(false);
   const [model, setModel] = useState(OPENROUTER_MODELS[0].value);
-  
+
   const [listening, setListening] = useState(false);
   const fileInputRef = useRef(null);
   const recognitionRef = useRef(null);
@@ -93,7 +92,7 @@ export default function ChatBox2() {
         })
       });
       const data = await response.json();
-      console.log("[OpenRouter API] Status:", response.status, "Response:", data);
+
       if (!response.ok) {
         setMessages(msgs => ([...msgs, { from: "bot", text: data.error?.message || "Lỗi kết nối chatbot." }]));
         setLoading(false);
@@ -109,8 +108,8 @@ export default function ChatBox2() {
     }
   };
 
-  
- 
+
+
   const handleSend = () => {
     if (input.trim() === "") return;
     setMessages([...messages, { from: "user", text: input }]);
@@ -145,7 +144,7 @@ export default function ChatBox2() {
               <button className="chatbox2-close" onClick={() => setOpen(false)} title="Đóng">×</button>
             </div>
             {/* Chọn model AI */}
-            <div style={{ padding: '12px 40px 0 40px', display: 'flex', alignItems: 'center', gap: 12, flexWrap: 'wrap', marginBottom:'20px' , }}>
+            <div style={{ padding: '12px 40px 0 40px', display: 'flex', alignItems: 'center', gap: 12, flexWrap: 'wrap', marginBottom: '20px', }}>
               <label htmlFor="ai-model-select" style={{ fontWeight: 600, color: '#2c91aa', marginRight: 8 }}>Mô hình:</label>
               <select
                 id="ai-model-select"
@@ -216,45 +215,45 @@ export default function ChatBox2() {
             </div>
             {/* Overlay voice */}
             {listening && (
-              <div style={{position:'fixed',left:0,top:0,width:'100vw',height:'100vh',background:'rgba(0,0,0,0.25)',zIndex:99999,display:'flex',alignItems:'center',justifyContent:'center'}}>
-                <div style={{background:'#fff',padding:32,borderRadius:18,boxShadow:'0 4px 32px rgba(44,145,170,0.18)',display:'flex',flexDirection:'column',alignItems:'center',gap:16,minWidth:260}}>
-                  <div style={{fontSize:28,color:'#43a047',marginBottom:8}}>🎤</div>
-                  <div style={{fontWeight:700,fontSize:20,color:'#2c91aa'}}>Đang lắng nghe...</div>
-                  <button onClick={stopListening} style={{marginTop:12,padding:'8px 24px',background:'#ea6645',color:'#fff',border:'none',borderRadius:8,fontWeight:600,fontSize:16,cursor:'pointer'}}>Dừng</button>
+              <div style={{ position: 'fixed', left: 0, top: 0, width: '100vw', height: '100vh', background: 'rgba(0,0,0,0.25)', zIndex: 99999, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                <div style={{ background: '#fff', padding: 32, borderRadius: 18, boxShadow: '0 4px 32px rgba(44,145,170,0.18)', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 16, minWidth: 260 }}>
+                  <div style={{ fontSize: 28, color: '#43a047', marginBottom: 8 }}>🎤</div>
+                  <div style={{ fontWeight: 700, fontSize: 20, color: '#2c91aa' }}>Đang lắng nghe...</div>
+                  <button onClick={stopListening} style={{ marginTop: 12, padding: '8px 24px', background: '#ea6645', color: '#fff', border: 'none', borderRadius: 8, fontWeight: 600, fontSize: 16, cursor: 'pointer' }}>Dừng</button>
                 </div>
               </div>
             )}
             {/* Ô nhập liệu luôn nằm sát dưới cùng panel */}
             {tab === "chat" && (
-              <div className="chatbox2-input" style={{position:'relative'}}>
+              <div className="chatbox2-input" style={{ position: 'relative' }}>
                 {/* Icon + và menu popup */}
-                <div style={{position:'relative', marginRight: 4}}>
+                <div style={{ position: 'relative', marginRight: 4 }}>
                   <button
                     className="chatbox2-plus-btn"
-                    style={{background:'none',border:'none',fontSize:22,cursor:'pointer',color:'#2c91aa',borderRadius:'50%',width:36,height:36,display:'flex',alignItems:'center',justifyContent:'center'}}
+                    style={{ background: 'none', border: 'none', fontSize: 22, cursor: 'pointer', color: '#2c91aa', borderRadius: '50%', width: 36, height: 36, display: 'flex', alignItems: 'center', justifyContent: 'center' }}
                     onClick={() => setPlusMenuOpen(v => !v)}
                     title="Thêm tuỳ chọn"
                   >
                     <FaPlus />
                   </button>
                   {plusMenuOpen && (
-                    <div style={{position:'absolute',left:0,top:44,zIndex:1000,background:'#fff',boxShadow:'0 4px 16px rgba(44,145,170,0.13)',borderRadius:12,padding:'10px 0',minWidth:210}}>
+                    <div style={{ position: 'absolute', left: 0, top: 44, zIndex: 1000, background: '#fff', boxShadow: '0 4px 16px rgba(44,145,170,0.13)', borderRadius: 12, padding: '10px 0', minWidth: 210 }}>
                       <button
-                        style={{display:'flex',alignItems:'center',gap:8,padding:'8px 18px',width:'100%',background:'none',border:'none',fontSize:15,cursor:'pointer',color:'#217a9a'}}
+                        style={{ display: 'flex', alignItems: 'center', gap: 8, padding: '8px 18px', width: '100%', background: 'none', border: 'none', fontSize: 15, cursor: 'pointer', color: '#217a9a' }}
                         onClick={() => { fileInputRef.current.click(); setPlusMenuOpen(false); }}
                       >
                         <FaRegImage /> Thêm ảnh và tệp
                       </button>
-                      <div style={{borderTop:'1px solid #e0e0e0',margin:'8px 0'}}></div>
-                      <div style={{padding:'0 18px 4px 18px',fontWeight:600,fontSize:14,color:'#888'}}>Thêm từ ứng dụng</div>
+                      <div style={{ borderTop: '1px solid #e0e0e0', margin: '8px 0' }}></div>
+                      <div style={{ padding: '0 18px 4px 18px', fontWeight: 600, fontSize: 14, color: '#888' }}>Thêm từ ứng dụng</div>
                       <button
-                        style={{display:'flex',alignItems:'center',gap:8,padding:'7px 18px',width:'100%',background:'none',border:'none',fontSize:15,cursor:'pointer',color:'#217a9a'}}
+                        style={{ display: 'flex', alignItems: 'center', gap: 8, padding: '7px 18px', width: '100%', background: 'none', border: 'none', fontSize: 15, cursor: 'pointer', color: '#217a9a' }}
                         onClick={() => { alert('Tính năng Google Drive sẽ sớm ra mắt!'); setPlusMenuOpen(false); }}
                       >
                         <FaGoogleDrive /> Kết nối Google Drive
                       </button>
                       <button
-                        style={{display:'flex',alignItems:'center',gap:8,padding:'7px 18px',width:'100%',background:'none',border:'none',fontSize:15,cursor:'pointer',color:'#217a9a'}}
+                        style={{ display: 'flex', alignItems: 'center', gap: 8, padding: '7px 18px', width: '100%', background: 'none', border: 'none', fontSize: 15, cursor: 'pointer', color: '#217a9a' }}
                         onClick={() => { alert('Tính năng OneDrive sẽ sớm ra mắt!'); setPlusMenuOpen(false); }}
                       >
                         <FaMicrosoft /> Kết nối Microsoft OneDrive
@@ -264,20 +263,20 @@ export default function ChatBox2() {
                 </div>
                 {/* ... các nút còn lại ... */}
                 <button className="chatbox2-emoji-btn" title="Chèn emoji">😊</button>
-                <button className="chatbox2-voice-btn" title="Gửi voice" onClick={listening ? stopListening : startListening} style={{background: listening ? '#43a047' : 'none', border: 'none', fontSize: 20, cursor: 'pointer', color: listening ? '#fff' : '#2c91aa', borderRadius: '50%', width: 36, height: 36, display: 'flex', alignItems: 'center', justifyContent: 'center'}}>
-                  <svg width="22" height="22" fill="none" viewBox="0 0 24 24"><path d="M12 18c2.21 0 4-1.79 4-4V7a4 4 0 10-8 0v7c0 2.21 1.79 4 4 4zm5-4a1 1 0 112 0c0 3.31-2.69 6-6 6s-6-2.69-6-6a1 1 0 112 0c0 2.21 1.79 4 4 4s4-1.79 4-4z" fill={listening ? '#fff' : '#2c91aa'}/></svg>
+                <button className="chatbox2-voice-btn" title="Gửi voice" onClick={listening ? stopListening : startListening} style={{ background: listening ? '#43a047' : 'none', border: 'none', fontSize: 20, cursor: 'pointer', color: listening ? '#fff' : '#2c91aa', borderRadius: '50%', width: 36, height: 36, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                  <svg width="22" height="22" fill="none" viewBox="0 0 24 24"><path d="M12 18c2.21 0 4-1.79 4-4V7a4 4 0 10-8 0v7c0 2.21 1.79 4 4 4zm5-4a1 1 0 112 0c0 3.31-2.69 6-6 6s-6-2.69-6-6a1 1 0 112 0c0 2.21 1.79 4 4 4s4-1.79 4-4z" fill={listening ? '#fff' : '#2c91aa'} /></svg>
                 </button>
-                <button className="chatbox2-upload-btn" title="Gửi ảnh" onClick={() => fileInputRef.current.click()} style={{background: 'none', border: 'none', fontSize: 20, cursor: 'pointer'}}>
-                  <svg width="22" height="22" fill="none" viewBox="0 0 24 24"><path d="M19 21H5a2 2 0 01-2-2V5a2 2 0 012-2h14a2 2 0 012 2v14a2 2 0 01-2 2zM5 5v14h14V5H5zm7 2a2 2 0 110 4 2 2 0 010-4zm-6 10l3.5-4.5 2.5 3 3.5-4.5L19 17H5z" fill="#2c91aa"/></svg>
+                <button className="chatbox2-upload-btn" title="Gửi ảnh" onClick={() => fileInputRef.current.click()} style={{ background: 'none', border: 'none', fontSize: 20, cursor: 'pointer' }}>
+                  <svg width="22" height="22" fill="none" viewBox="0 0 24 24"><path d="M19 21H5a2 2 0 01-2-2V5a2 2 0 012-2h14a2 2 0 012 2v14a2 2 0 01-2 2zM5 5v14h14V5H5zm7 2a2 2 0 110 4 2 2 0 010-4zm-6 10l3.5-4.5 2.5 3 3.5-4.5L19 17H5z" fill="#2c91aa" /></svg>
                   <input type="file" accept="image/*" ref={fileInputRef} style={{ display: 'none' }} onChange={handleImageUpload} />
                 </button>
-                <input type="text" placeholder="Aa" value={input} onChange={e => setInput(e.target.value)} onKeyDown={handleKeyDown} disabled={loading} style={{marginLeft:8}} />
+                <input type="text" placeholder="Aa" value={input} onChange={e => setInput(e.target.value)} onKeyDown={handleKeyDown} disabled={loading} style={{ marginLeft: 8 }} />
                 <button className="chatbox2-send-btn" title="Gửi" onClick={handleSend} disabled={input.trim() === "" || loading}>
                   {loading ? (
-                    <span className="loader" style={{width: 20, height: 20, display: 'inline-block'}}></span>
+                    <span className="loader" style={{ width: 20, height: 20, display: 'inline-block' }}></span>
                   ) : (
                     <svg width="24" height="24" fill="none" viewBox="0 0 24 24">
-                      <path d="M3 20L21 12L3 4V10L17 12L3 14V20Z" fill="#fff"/>
+                      <path d="M3 20L21 12L3 4V10L17 12L3 14V20Z" fill="#fff" />
                     </svg>
                   )}
                 </button>
@@ -293,11 +292,11 @@ export default function ChatBox2() {
             <circle cx="9" cy="10" r="1" fill="#fff" />
             <circle cx="15" cy="10" r="1" fill="#fff" />
           </svg> */}
-             <img
-    src={IconAvatar}
-    alt="AI Avatar"
-    className="w-9 h-9 rounded-full object-cover"
-  />
+          <img
+            src={IconAvatar}
+            alt="AI Avatar"
+            className="w-9 h-9 rounded-full object-cover"
+          />
         </button>
       )}
     </div>

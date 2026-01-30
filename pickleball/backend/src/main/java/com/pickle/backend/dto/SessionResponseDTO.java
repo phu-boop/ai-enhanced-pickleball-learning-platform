@@ -1,7 +1,6 @@
 package com.pickle.backend.dto;
 
 import com.pickle.backend.entity.Session;
-import java.time.LocalDateTime;
 
 public class SessionResponseDTO {
     private String sessionId;
@@ -24,18 +23,59 @@ public class SessionResponseDTO {
     }
 
     // Getters và Setters
-    public String getSessionId() { return sessionId; }
-    public void setSessionId(String sessionId) { this.sessionId = sessionId; }
-    public String getCoachId() { return coachId; }
-    public void setCoachId(String coachId) { this.coachId = coachId; }
-    public String getLearnerId() { return learnerId; }
-    public void setLearnerId(String learnerId) { this.learnerId = learnerId; }
-    public String getDatetime() { return datetime; }
-    public void String(String datetime) { this.datetime = datetime; }
-    public Session.Status getStatus() { return status; }
-    public void setStatus(Session.Status status) { this.status = status; }
-    public String getVideoLink() { return videoLink; }
-    public void setVideoLink(String videoLink) { this.videoLink = videoLink; }
-    public String getFeedback() { return feedback; }
-    public void setFeedback(String feedback) { this.feedback = feedback; }
+    public String getSessionId() {
+        return sessionId;
+    }
+
+    public void setSessionId(String sessionId) {
+        this.sessionId = sessionId;
+    }
+
+    public String getCoachId() {
+        return coachId;
+    }
+
+    public void setCoachId(String coachId) {
+        this.coachId = coachId;
+    }
+
+    public String getLearnerId() {
+        return learnerId;
+    }
+
+    public void setLearnerId(String learnerId) {
+        this.learnerId = learnerId;
+    }
+
+    public String getDatetime() {
+        return datetime;
+    }
+
+    public void String(String datetime) {
+        this.datetime = datetime;
+    }
+
+    public Session.Status getStatus() {
+        return status;
+    }
+
+    public void setStatus(Session.Status status) {
+        this.status = status;
+    }
+
+    public String getVideoLink() {
+        return videoLink;
+    }
+
+    public void setVideoLink(String videoLink) {
+        this.videoLink = videoLink;
+    }
+
+    public String getFeedback() {
+        return feedback;
+    }
+
+    public void setFeedback(String feedback) {
+        this.feedback = feedback;
+    }
 }

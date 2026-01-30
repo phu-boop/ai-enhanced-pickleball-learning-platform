@@ -18,7 +18,6 @@ const ProfileDetails = () => {
         const userId = sessionStorage.getItem("id_user");
         const response = await fetchUserById(userId);
         if (response.status === 200) {
-          console.log("User data:", response.data);
           setUser({
             userId: response.data.userId,
             name: response.data.name,

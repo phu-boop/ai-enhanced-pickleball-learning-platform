@@ -50,23 +50,42 @@ Nền tảng học Pickleball ứng dụng trí tuệ nhân tạo (AI) và video
 ## 🐳 Cách chạy bằng Docker
 
 > **Yêu cầu:** Cài sẵn Docker & Docker Compose
+> - [Docker](https://docs.docker.com/get-docker/)
+> - [Docker Compose](https://docs.docker.com/compose/install/)
 
-### 1. Clone project
-git clone https://github.com/ten-ban/PickleCoach-AI.git
-cd PickleCoach-AI
-2. Cấu hình .env
-Tạo file .env trong thư mục backend/ và frontend/ nếu cần. Ví dụ:
+### 1. Cấu hình môi trường (.env)
+File `.env` phải đặt cùng cấp với file `docker-compose.yml` tại thư mục `pickleball/docker/`.
 
-backend/.env
+Copy file mẫu và đổi tên thành `.env`:
+```bash
+cp pickleball/docker/.env.example pickleball/docker/.env
+```
+Cập nhật các giá trị trong `.env` (DB_HOST, PORT, etc.) cho phù hợp.
 
-3. Build và chạy Docker
-bash
-Copy
-Edit
-docker-compose up --build
-4. Truy cập
-Frontend: http://localhost:3000
+### 2. Build và chạy Docker
+Mở terminal tại thư mục chứa file docker-compose:
+```bash
+cd pickleball/docker
+```
 
-Backend API: http://localhost:8080
+Lần đầu cài đặt (hoặc khi có thay đổi code):
+```bash
+docker-compose up --build -d
+```
 
-MySQL: localhost:3306 (bên trong Docker)
+Các lần sau:
+```bash
+docker-compose up -d
+```
+
+Dừng server:
+```bash
+docker-compose down
+```
+
+### 3. Truy cập ứng dụng
+- **Frontend App**: http://localhost (Port 80)
+- **Backend API**: http://localhost:8080
+- **Admin/PhPMyAdmin** (nếu có): http://localhost:8081 (tuỳ cấu hình)
+- **AI Vision Service**: http://localhost:8000
+- **Quiz Generator**: http://localhost:8001

@@ -12,7 +12,6 @@ const ImageWithFallback = ({ src, alt, className, fallbackSrc, ...props }) => {
   };
 
   const handleLoad = () => {
-    console.log('Image loaded successfully:', imgSrc);
   };
 
   return (

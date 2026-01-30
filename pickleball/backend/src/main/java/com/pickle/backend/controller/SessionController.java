@@ -9,7 +9,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
-import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -30,7 +29,7 @@ public class SessionController {
     public ResponseEntity<Session> getSessionById(@PathVariable String sessionId) {
         Optional<Session> session = sessionService.getSessionById(sessionId);
         return session.map(ResponseEntity::ok)
-                      .orElseGet(() -> ResponseEntity.notFound().build());
+                .orElseGet(() -> ResponseEntity.notFound().build());
     }
 
     @PostMapping
@@ -44,6 +43,7 @@ public class SessionController {
     public ResponseEntity<Session> updateSession(@PathVariable String sessionId, @RequestBody Session sessionDetails) {
         return ResponseEntity.ok(sessionService.updateSession(sessionId, sessionDetails));
     }
+
     @PutMapping("/status/{sessionId}")
     @PreAuthorize("hasRole('coach')")
     public ResponseEntity<?> updateStatusSession(@PathVariable String sessionId) {

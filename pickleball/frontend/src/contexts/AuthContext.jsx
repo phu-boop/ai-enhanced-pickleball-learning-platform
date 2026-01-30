@@ -20,7 +20,7 @@ export function AuthProvider({ children }) {
   };
 
   const loginWithGoogle = () => {
-    window.location.href = 'http://localhost:8080/oauth2/authorization/google'; // Redirect đến endpoint Google OAuth2
+    window.location.href = `${import.meta.env.VITE_API_URL || 'http://localhost:8080'}/oauth2/authorization/google`;
   };
 
   const logout = () => {

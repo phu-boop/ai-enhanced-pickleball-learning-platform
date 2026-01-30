@@ -7,7 +7,7 @@ import { useAuth } from '../../../contexts/AuthContext';
 
 const HomePage = ({ userId }) => {
   const { token } = useAuth();
-  console.log(token);
+
   const [courses, setCourses] = useState([]);
   const [recommendedLessons, setRecommendedLessons] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -42,7 +42,7 @@ const HomePage = ({ userId }) => {
   useEffect(() => {
     const handleStorageChange = (e) => {
       if (e.key === 'videoAnalysisComplete' && e.newValue === 'true') {
-        console.log('Video analysis completed, refreshing recommended lessons...');
+
         fetchRecommendedLessons();
         // Xóa flag
         localStorage.removeItem('videoAnalysisComplete');

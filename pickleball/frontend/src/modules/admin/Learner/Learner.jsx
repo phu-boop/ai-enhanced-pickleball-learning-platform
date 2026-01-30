@@ -23,7 +23,7 @@ const Learner = () => {
         setLearners(response.data);
         setLoading(false);
       } catch (err) {
-        console.log(err);
+
         setError('Error loading learners');
         setLoading(false);
       }
@@ -54,7 +54,7 @@ const Learner = () => {
       });
       setIsModalOpen(false);
     } catch (err) {
-      console.log(err);
+
       setError('Error adding learner');
     }
   };
@@ -67,7 +67,7 @@ const Learner = () => {
       setIsEditModalOpen(false);
       setEditLearner(null);
     } catch (err) {
-      console.log(err);
+
       setError('Error updating learner');
     }
   };
@@ -77,7 +77,7 @@ const Learner = () => {
       await deleteLearner(id);
       setLearners(learners.filter(l => l.id !== id));
     } catch (err) {
-      console.log(err);
+
       setError('Error deleting learner');
     }
   };
@@ -88,7 +88,7 @@ const Learner = () => {
       setEditLearner(response.data);
       setIsEditModalOpen(true);
     } catch (err) {
-      console.log(err);
+
       setError('Error loading learner details');
     }
   };

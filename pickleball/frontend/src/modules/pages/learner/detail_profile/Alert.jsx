@@ -5,7 +5,6 @@ import "font-awesome/css/font-awesome.min.css";
 
 const Alert = () => {
   const [user, setUser] = useState(null);
-  console.log(user);
   useEffect(() => {
     const fetchUser = async () => {
       try {

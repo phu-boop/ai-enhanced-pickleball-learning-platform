@@ -18,8 +18,6 @@ import org.springframework.http.MediaType;
 import java.util.Map;
 import java.util.HashMap;
 
-import java.util.Optional;
-
 @RestController
 @RequestMapping("/api/users")
 public class UserController {
@@ -36,7 +34,6 @@ public class UserController {
         return ResponseEntity.ok(userService.getAllUsers());
     }
 
-    
     @GetMapping("/{id}")
     public ResponseEntity<User> getUserById(@PathVariable String id) {
         return userService.getUserById(id)
@@ -77,8 +74,7 @@ public class UserController {
             User user = userService.registerUser(
                     request.getName(),
                     request.getEmail(),
-                    request.getPassword()
-            );
+                    request.getPassword());
             return ResponseEntity.ok("User registered successfully with ID: " + user.getUserId());
         } catch (RuntimeException e) {
             return ResponseEntity.badRequest().body(e.getMessage());
@@ -93,7 +89,8 @@ public class UserController {
             String id_user = userService.getIdbyEmail(request.getEmail());
             return ResponseEntity.ok(new LoginResponse(token, "login successful", role, id_user));
         } else {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new LoginResponse(null, "Invalid email or password", null, null));
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                    .body(new LoginResponse(null, "Invalid email or password", null, null));
         }
     }
 
@@ -119,11 +116,12 @@ public class UserController {
         return ResponseEntity.status(response.getStatusCode())
                 .body(Map.of("message", response.getBody()));
     }
+
     @PostMapping("update-avata")
     public ResponseEntity<String> avata(@RequestBody Map<String, String> request) {
         String url = request.get("avata");
         String id = request.get("id");
-        String response =userService.updateAvata(url,id);
+        String response = userService.updateAvata(url, id);
         return ResponseEntity.ok(response);
     }
 

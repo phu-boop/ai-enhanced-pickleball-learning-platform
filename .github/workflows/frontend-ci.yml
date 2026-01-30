@@ -1,0 +1,119 @@
+name: Frontend CI/CD
+
+on:
+    push:
+        branches: [main, develop]
+        paths:
+            - "pickleball/frontend/**"
+            - ".github/workflows/frontend-ci.yml"
+    pull_request:
+        branches: [main, develop]
+        paths:
+            - "pickleball/frontend/**"
+
+jobs:
+    test:
+        name: Build and Test Frontend
+        runs-on: ubuntu-latest
+
+        steps:
+            - name: Checkout code
+              uses: actions/checkout@v4
+
+            - name: Setup Node.js
+              uses: actions/setup-node@v4
+              with:
+                  node-version: "20"
+                  cache: "npm"
+                  cache-dependency-path: pickleball/frontend/package-lock.json
+
+            - name: Install dependencies
+              working-directory: ./pickleball/frontend
+              run: npm ci
+
+            - name: Run linter
+              working-directory: ./pickleball/frontend
+              run: npm run lint
+              continue-on-error: true
+
+            - name: Build application
+              working-directory: ./pickleball/frontend
+              env:
+                  VITE_API_URL: http://localhost:8081
+                  VITE_AI_SERVICE_URL: http://localhost:8090
+                  VITE_OPENROUTER_API_KEY: ${{ secrets.OPENROUTER_API_KEY }}
+              run: npm run build
+
+            - name: Upload build artifacts
+              uses: actions/upload-artifact@v3
+              with:
+                  name: frontend-build
+                  path: pickleball/frontend/dist
+                  retention-days: 7
+
+    code-quality:
+        name: Code Quality Check
+        runs-on: ubuntu-latest
+        needs: test
+
+        steps:
+            - name: Checkout code
+              uses: actions/checkout@v4
+
+            - name: Check for console.log statements
+              run: |
+                  echo "Checking for console.log in production code..."
+                  if grep -r "console.log" pickleball/frontend/src --include="*.jsx" --include="*.js" ; then
+                    echo "⚠️ Warning: Found console.log statements in code"
+                    exit 0
+                  else
+                    echo "✅ No console.log statements found"
+                  fi
+
+            - name: Check for TODO/FIXME comments
+              run: |
+                  echo "Checking for TODO/FIXME comments..."
+                  if grep -r "TODO\|FIXME" pickleball/frontend/src --include="*.jsx" --include="*.js" ; then
+                    echo "⚠️ Warning: Found TODO/FIXME comments in code"
+                    exit 0
+                  else
+                    echo "✅ No TODO/FIXME comments found"
+                  fi
+
+    build-docker:
+        name: Build Docker Image
+        runs-on: ubuntu-latest
+        needs: test
+        if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+
+        steps:
+            - name: Checkout code
+              uses: actions/checkout@v4
+
+            - name: Set up Docker Buildx
+              uses: docker/setup-buildx-action@v3
+
+            - name: Login to Docker Hub (Optional)
+              if: github.event_name == 'push'
+              uses: docker/login-action@v3
+              with:
+                  username: ${{ secrets.DOCKER_USERNAME }}
+                  password: ${{ secrets.DOCKER_PASSWORD }}
+              continue-on-error: true
+
+            - name: Build Docker image
+              working-directory: ./pickleball/frontend
+              run: |
+                  docker build \
+                    --build-arg VITE_API_URL=http://localhost:8081 \
+                    --build-arg VITE_AI_SERVICE_URL=http://localhost:8090 \
+                    -t picklecoach-frontend:${{ github.sha }} \
+                    -t picklecoach-frontend:latest \
+                    .
+
+            - name: Push to Docker Hub (Optional)
+              if: github.event_name == 'push'
+              run: |
+                  docker tag picklecoach-frontend:latest ${{ secrets.DOCKER_USERNAME }}/picklecoach-frontend:latest
+                  docker push ${{ secrets.DOCKER_USERNAME }}/picklecoach-frontend:latest
+              continue-on-error: true

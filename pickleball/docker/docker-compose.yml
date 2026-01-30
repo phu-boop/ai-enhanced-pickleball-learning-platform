@@ -5,26 +5,18 @@ services:
       dockerfile: Dockerfile
     image: picklecoach-backend
     ports:
-      - "8080:8080"
-    environment:
-      - SPRING_DATASOURCE_URL=jdbc:mysql://${DB_HOST}:${DB_PORT}/${DB_NAME}?useSSL=false&serverTimezone=UTC&allowPublicKeyRetrieval=true
-      - FRONTEND_URL=${FRONTEND_URL}
-      - SPRING_DATASOURCE_USERNAME=${DB_USER}
-      - SPRING_DATASOURCE_PASSWORD=${DB_PASSWORD}
-      - CLIENT_ID=${CLIENT_ID}
-      - CLIENT_SECRET=${CLIENT_SECRET}
-      - EMAIL=${EMAIL}
-      - Frontend_url=${Frontend_url}
-      - Return_url=${Return_url}
-      - Vnp_HashSecret=${Vnp_HashSecret}
-      - Vnp_TmnCode=${Vnp_TmnCode}
-      - Vnp_Url=${Vnp_Url}
-      - AI_SERVICE_URL=${AI_SERVICE_URL}
+      - "${BACKEND_PORT}:8080"
+    env_file:
+      - .env
     depends_on:
       - mysql
     networks:
       - app-network
     restart: unless-stopped
+    deploy:
+      resources:
+        limits:
+          memory: 1G
 
   frontend:
     build:
@@ -32,39 +24,52 @@ services:
       dockerfile: Dockerfile
       args:
         - OPENROUTER_API_KEY=${OPENROUTER_API_KEY}
+        - VITE_API_URL=${BACKEND_URL_PUBLIC}
+        - VITE_AI_SERVICE_URL=${VITE_AI_SERVICE_URL}
     image: picklecoach-frontend
-    environment:
-      - VITE_OPENROUTER_API_KEY=${OPENROUTER_API_KEY}
     ports:
-      - "80:80"
+      - "${FRONTEND_PORT}:80"
+    env_file:
+      - .env
+    environment:
+      # Inject browser-visible vars for Vite/Nginx if needed
+      - VITE_API_URL=${BACKEND_URL_PUBLIC}
     depends_on:
       - backend
     networks:
       - app-network
     restart: unless-stopped
+
   mysql:
     image: mysql:8.0
     container_name: pickleball_mysql
-    environment:
-      MYSQL_ROOT_PASSWORD: ${DB_PASSWORD}
-      MYSQL_DATABASE: ${DB_NAME}
     ports:
-      - "3307:3306"
+      - "${MYSQL_PORT}:3306"
+    environment:
+      MYSQL_ROOT_PASSWORD: ${DB_ROOT_PASSWORD}
+      MYSQL_DATABASE: ${DB_NAME}
+      MYSQL_USER: ${DB_USER}
+      MYSQL_PASSWORD: ${DB_PASSWORD}
     volumes:
       - mysql_data:/var/lib/mysql
       - ../mysql-init:/docker-entrypoint-initdb.d
     networks:
       - app-network
     restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "mysqladmin" ,"ping", "-h", "localhost"]
+      timeout: 20s
+      retries: 10
+
   aivision:
     build:
       context: ../../PickleballAIVision
       dockerfile: Dockerfile
     image: picklecoach-aivision
     ports:
-      - "8000:8000"
-    environment:
-      - BACKEND_URL=${BACKEND_URL}
+      - "${AI_SERVICE_PORT}:8000"
+    env_file:
+      - .env
     networks:
       - app-network
     restart: unless-stopped
@@ -72,22 +77,22 @@ services:
       - ./data:/app/data
     depends_on:
       - backend
+
   quiz-generator:
     build:
       context: ../../Pickeball_AI_Quizz
       dockerfile: Dockerfile
     image: quiz-generator
     ports:
-      - "8001:8001"
-    environment:
-      - GEMINI_API_KEY=${GEMINI_API_KEY}
+      - "${QUIZ_SERVICE_PORT}:8001"
+    env_file:
+      - .env
     networks:
       - app-network
     restart: unless-stopped
     depends_on:
       - backend
-    env_file:
-      - .env
+
 networks:
   app-network:
     driver: bridge

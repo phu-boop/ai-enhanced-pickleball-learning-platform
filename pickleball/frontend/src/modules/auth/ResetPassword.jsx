@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { resetPassword as apiResetPassword } from '../../api/auth';
 
 const ResetPassword = () => {
     const [password, setPassword] = useState('');
@@ -12,12 +13,12 @@ const ResetPassword = () => {
             return;
         }
         try {
-            const response = await fetch('http://localhost:8080/api/users/reset-password', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ password }),
-            });
-            if (response.ok) window.location.href = 'http://localhost:5173/login';
+            const urlParams = new URLSearchParams(window.location.search);
+            const email = urlParams.get('email') || localStorage.getItem('resetEmail'); // Get email from context/storage
+            if (!email) throw new Error("Email not found");
+
+            await apiResetPassword(email, password);
+            window.location.href = '/login';
         } catch (error) {
             setError('Failed to reset password.');
         }

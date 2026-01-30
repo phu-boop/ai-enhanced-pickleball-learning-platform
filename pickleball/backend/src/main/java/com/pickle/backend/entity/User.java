@@ -48,22 +48,9 @@ public class User {
 
     @Column(name = "url_avata", length = 500)
     private String urlavata;
-    // Getter tùy chỉnh cho role (nếu cần)
-    // public String getRole() {
-    //     return role;
-    // }
-    public String getId(){
+
+    public String getId() {
         return userId;
     }
 
-    // Xóa các phương thức tùy chỉnh gây lỗi
-    // public void setPreferences(String string) {
-    //     // TODO Auto-generated method stub
-    //     throw new UnsupportedOperationException("Unimplemented method 'setPreferences'");
-    // }
-
-    // public void setSkillLevel(String string) {
-    //     // TODO Auto-generated method stub
-    //     throw new UnsupportedOperationException("Unimplemented method 'setSkillLevel'");
-    // }
 }

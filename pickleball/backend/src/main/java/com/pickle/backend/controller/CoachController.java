@@ -10,7 +10,6 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/coaches")
@@ -44,6 +43,7 @@ public class CoachController {
         String result = coachService.confirmCoachById(coachId);
         return ResponseEntity.ok(result);
     }
+
     @PostMapping
     @PreAuthorize("hasRole('USER')")
     public Coach createCoach(@RequestBody Coach coach) {

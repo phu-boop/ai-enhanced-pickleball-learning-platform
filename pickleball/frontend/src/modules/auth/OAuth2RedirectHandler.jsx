@@ -12,9 +12,7 @@ const OAuth2RedirectHandler = () => {
     const role = params.get("role");
     const message = params.get("message");
 
-    console.log("Initial Token:", token);
-    console.log("Initial Role:", role);
-    console.log("Initial Message:", message);
+
 
     if (token && role) {
       // Chuẩn hóa role: nếu không có "ROLE_", thêm vào

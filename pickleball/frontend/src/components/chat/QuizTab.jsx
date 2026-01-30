@@ -18,7 +18,6 @@ export default function QuizTab({ userId }) {
             setLoading(true);
             setError(null);
             try {
-                console.log("🔄 Loading adaptive quiz for user:", userId);
 
                 const res = await generateQuiz({
                     learnerId: userId,
@@ -29,12 +28,10 @@ export default function QuizTab({ userId }) {
                 const data = res.data || res;
                 const questionsRaw = data.questions || [];
 
-                console.log("📥 Received quiz data:", data);
 
                 // Lưu thông tin phân tích từ AI
                 if (data.learner_analysis) {
                     setLearnerAnalysis(data.learner_analysis);
-                    console.log("🎯 AI Analysis:", data.learner_analysis);
                 }
 
                 const processedQuestions = questionsRaw.map(q => {
@@ -54,7 +51,6 @@ export default function QuizTab({ userId }) {
                 });
 
                 setQuestions(processedQuestions);
-                console.log("✅ Quiz loaded successfully:", processedQuestions.length, "questions");
 
             } catch (err) {
                 console.error("❌ Error loading adaptive quiz:", err);
@@ -81,7 +77,6 @@ export default function QuizTab({ userId }) {
         const correctText = currentQ.options[currentQ.correctAnswer]?.text;
 
         try {
-            console.log("💾 Saving quiz result for question:", currentQ.question.substring(0, 50) + "...");
 
             await saveQuizResult({
                 learnerId: userId,
@@ -96,7 +91,6 @@ export default function QuizTab({ userId }) {
                 level: "medium"
             });
 
-            console.log("✅ Quiz result saved successfully");
         } catch (err) {
             console.error("❌ Error saving quiz result:", err);
         }
@@ -109,7 +103,6 @@ export default function QuizTab({ userId }) {
         // Kiểm tra nếu đây là câu hỏi cuối cùng
         if (currentQuestion >= questions.length - 1) {
             setQuizFinished(true);
-            console.log("🏁 Quiz finished! Final score:", score + "/" + questions.length);
         } else {
             setCurrentQuestion(prev => prev + 1);
             setSelectedOption(null);
@@ -118,7 +111,6 @@ export default function QuizTab({ userId }) {
     };
 
     const resetQuiz = () => {
-        console.log("🔄 Restarting quiz...");
         setCurrentQuestion(0);
         setScore(0);
         setSelectedOption(null);
@@ -142,7 +134,6 @@ export default function QuizTab({ userId }) {
                 // Lưu thông tin phân tích mới
                 if (data.learner_analysis) {
                     setLearnerAnalysis(data.learner_analysis);
-                    console.log("🎯 New AI Analysis:", data.learner_analysis);
                 }
 
                 const processedQuestions = questionsRaw.map(q => {
@@ -162,7 +153,6 @@ export default function QuizTab({ userId }) {
                 });
 
                 setQuestions(processedQuestions);
-                console.log("🆕 New adaptive quiz loaded:", processedQuestions.length, "questions");
 
             } catch (err) {
                 console.error("❌ Error loading new quiz:", err);

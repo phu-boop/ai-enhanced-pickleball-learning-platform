@@ -1,17 +1,16 @@
 package com.pickle.backend.dto;
 
-
-import com.pickle.backend.entity.Learner;
-
 public class LearnerDTO {
     private String id;
     private String skillLevel;
     private String goals;
     private String progress;
     private String userName;
+
     public String getUserName() {
         return userName;
     }
+
     public void setUserName(String userName) {
         this.userName = userName;
     }
@@ -31,6 +30,7 @@ public class LearnerDTO {
     public void setSkillLevel(String skillLevel) {
         this.skillLevel = skillLevel;
     }
+
     public String getProgress() {
         return progress;
     }
@@ -46,6 +46,5 @@ public class LearnerDTO {
     public String getId() {
         return id;
     }
-
 
 }

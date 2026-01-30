@@ -1,7 +1,7 @@
 import axios from 'axios';
 
 const apiClient = axios.create({
-  baseURL: 'http://localhost:8080', // URL của Spring Boot
+  baseURL: import.meta.env.VITE_API_URL || 'http://localhost:8080',
   headers: {
     'Content-Type': 'application/json',
   },
@@ -14,7 +14,7 @@ const handleOAuthCallback = async () => {
   const role = urlParams.get('role');
   const message = urlParams.get('message');
 
-  console.log('URL Params:', { token, role, message }); // Debug
+
 
   if (token && role) {
     try {
@@ -23,7 +23,7 @@ const handleOAuthCallback = async () => {
       sessionStorage.setItem('role', role);
       sessionStorage.setItem('email', ''); // Cập nhật email từ API nếu cần
       sessionStorage.setItem('id_user', ''); // Cập nhật id từ API nếu cần
-      console.log('OAuth2 Success:', message);
+
       window.location.href = '/'; // Chuyển hướng về trang chính
     } catch (error) {
       console.error('Error handling OAuth callback:', error);
