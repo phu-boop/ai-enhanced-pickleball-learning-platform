@@ -39,7 +39,7 @@ export const fetchCoachById = async (userId) => {
 
 export const updateCoach = async (userId, coachData) => {
     try {
-        const response = await fetch(`http://localhost:8080/api/coaches/${userId}`, {
+        const response = await fetch(`${import.meta.env.VITE_API_URL || 'http://localhost:8080'}/api/coaches/${userId}`, {
             method: 'PUT',
             headers: {
                 'Content-Type': 'application/json', // QUAN TRỌNG: Phải set content-type này

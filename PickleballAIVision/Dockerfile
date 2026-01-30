@@ -1,16 +1,20 @@
-# Sử dụng Python 3.10 làm image cơ sở
-FROM python:3.10
+# Use Python 3.10 slim for smaller image size and better compatibility
+FROM python:3.10-slim
 
 WORKDIR /app
 
-# Cài ffmpeg + git
+# Install system dependencies required for OpenCV and MediaPipe
 RUN apt-get update && apt-get install -y \
     ffmpeg \
+    libsm6 \
+    libxext6 \
     git \
+    build-essential \
     && rm -rf /var/lib/apt/lists/*
 
 COPY requirements.txt ./
 RUN pip install --upgrade pip
+# Install dependencies, preferring binary wheels to avoid compilation
 RUN pip install --no-cache-dir --prefer-binary -r requirements.txt
 
 COPY . .

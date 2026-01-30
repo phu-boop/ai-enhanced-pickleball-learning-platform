@@ -1,4 +1,5 @@
 package com.pickle.backend.controller;
+
 import com.pickle.backend.dto.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -23,7 +24,6 @@ import java.util.UUID; // Vẫn cần nếu LessonDTO dùng UUID, nếu không t
 
 @RestController
 @RequestMapping("/api")
-@CrossOrigin(origins = "http://localhost:5173")
 public class CourseController {
     private static final Logger log = LoggerFactory.getLogger(CourseController.class);
     @Autowired
@@ -37,6 +37,7 @@ public class CourseController {
 
     @Autowired
     private LearnerProgressRepository learnerProgressRepository;
+
     @GetMapping("/courses")
     public ResponseEntity<List<Course>> getAllCourses() {
         List<Course> courses = courseService.getAllCourses();
@@ -48,8 +49,7 @@ public class CourseController {
         List<String> featuredTitles = List.of(
                 "Pickleball Cơ Bản – Làm Quen Và Làm Chủ Cơ Bản",
                 "Kỹ Thuật Nền Tảng – Cải Thiện Cú Đánh & Phản Xạ",
-                "Pickleball Trung Cấp – Chiến Thuật Và Phối Hợp Đội"
-        );
+                "Pickleball Trung Cấp – Chiến Thuật Và Phối Hợp Đội");
         List<Course> courses = courseService.getCoursesByTitles(featuredTitles);
         return ResponseEntity.ok(courses);
     }
@@ -67,6 +67,7 @@ public class CourseController {
                 .map(ResponseEntity::ok)
                 .orElseGet(() -> ResponseEntity.notFound().build());
     }
+
     @GetMapping("/learners/{userId}/recommended-lessons")
     public ResponseEntity<List<Lesson>> getRecommendedLessons(@PathVariable String userId) {
         try {
@@ -176,9 +177,10 @@ public class CourseController {
 
     @GetMapping("/courses/{courseId}/lessons")
     public ResponseEntity<List<Lesson>> getLessonsByCourse(@PathVariable long courseId) {
-        List<Lesson> lessons=lessonService.getLessonByIdCourse(courseId);
+        List<Lesson> lessons = lessonService.getLessonByIdCourse(courseId);
         return ResponseEntity.ok(lessons);
     }
+
     @GetMapping("/updateLessonComplete/{progressId}")
     public ResponseEntity<String> updateLessonComplete(@PathVariable Long progressId) {
         try {
@@ -189,6 +191,7 @@ public class CourseController {
                     .body("Error updating lesson completion: " + e.getMessage());
         }
     }
+
     @PostMapping("/checkLearnerProgress")
     public ResponseEntity<CheckProgressResponseDTO> checkProgress(@RequestBody CheckProgressRequestDTO request) {
         try {
@@ -197,16 +200,16 @@ public class CourseController {
             String message = isExist
                     ? "Progress isExist"
                     : "Progress not isExist";
-            return ResponseEntity.ok(new CheckProgressResponseDTO(isExist, message,IdProgress));
+            return ResponseEntity.ok(new CheckProgressResponseDTO(isExist, message, IdProgress));
         } catch (Exception e) {
             CheckProgressResponseDTO response = new CheckProgressResponseDTO(
                     false,
                     "Failed to check progress: " + e.getMessage(),
-                    -1
-            );
+                    -1);
             return ResponseEntity.ok(response);
         }
     }
+
     @PostMapping("/checkCompleted")
     public ResponseEntity<CheckProgressResponseDTO> checkCompleted(@RequestBody CheckCompleteProgressDTO request) {
         try {
@@ -214,27 +217,26 @@ public class CourseController {
             String message = isComplete
                     ? "Progress is complete"
                     : "Progress is not complete";
-            return ResponseEntity.ok(new CheckProgressResponseDTO(isComplete, message,request.getId()));
+            return ResponseEntity.ok(new CheckProgressResponseDTO(isComplete, message, request.getId()));
         } catch (Exception e) {
             CheckProgressResponseDTO response = new CheckProgressResponseDTO(
                     false,
                     "Failed to check complete: " + e.getMessage(),
-                    -1
-            );
+                    -1);
             return ResponseEntity.ok(response);
         }
     }
-    
+
     // Endpoint để lấy bài học đề xuất dựa trên kết quả phân tích video
     @GetMapping("/recommended-lessons-from-analysis/{userId}")
     public ResponseEntity<List<Lesson>> getRecommendedLessonsFromAnalysis(
             @PathVariable String userId,
             @RequestParam(required = false) String skillLevel,
             @RequestParam(required = false) List<String> weakestShots) {
-        
+
         try {
             List<Lesson> lessons;
-            
+
             if (skillLevel != null && weakestShots != null && !weakestShots.isEmpty()) {
                 // Lấy bài học đề xuất dựa trên kết quả phân tích
                 lessons = curriculumService.getRecommendedLessonsBasedOnAnalysis(userId, skillLevel, weakestShots);
@@ -244,7 +246,7 @@ public class CourseController {
                 lessons = curriculumService.getRecommendedLessons(userId);
                 log.info("Đã lấy {} bài học đề xuất thông thường cho user {}", lessons.size(), userId);
             }
-            
+
             return ResponseEntity.ok(lessons);
         } catch (Exception e) {
             log.error("Lỗi khi lấy bài học đề xuất cho user {}: {}", userId, e.getMessage());
@@ -342,8 +344,10 @@ public class CourseController {
                 try {
                     existingLesson.setSkillType(Lesson.SkillType.valueOf(lessonDTO.getSkillType().toUpperCase()));
                 } catch (IllegalArgumentException e) {
-                    System.err.println("Invalid SkillType received during update: " + lessonDTO.getSkillType() + " - " + e.getMessage());
-                    throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Kiểu kỹ năng không hợp lệ khi cập nhật: " + lessonDTO.getSkillType());
+                    System.err.println("Invalid SkillType received during update: " + lessonDTO.getSkillType() + " - "
+                            + e.getMessage());
+                    throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
+                            "Kiểu kỹ năng không hợp lệ khi cập nhật: " + lessonDTO.getSkillType());
                 }
             } else {
                 existingLesson.setSkillType(null);
@@ -356,8 +360,10 @@ public class CourseController {
                 try {
                     existingLesson.setLevel(Lesson.LevelRequired.valueOf(lessonDTO.getLevel().toUpperCase()));
                 } catch (IllegalArgumentException e) {
-                    System.err.println("Invalid Level received during update: " + lessonDTO.getLevel() + " - " + e.getMessage());
-                    throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Cấp độ không hợp lệ khi cập nhật: " + lessonDTO.getLevel());
+                    System.err.println(
+                            "Invalid Level received during update: " + lessonDTO.getLevel() + " - " + e.getMessage());
+                    throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
+                            "Cấp độ không hợp lệ khi cập nhật: " + lessonDTO.getLevel());
                 }
             } else {
                 existingLesson.setLevel(null);
@@ -368,11 +374,14 @@ public class CourseController {
         if (lessonDTO.getCourseId() != null) {
             courseService.getCourseById(lessonDTO.getCourseId())
                     .ifPresentOrElse(existingLesson::setCourse, () -> {
-                        throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Không tìm thấy khóa học với ID: " + lessonDTO.getCourseId());
+                        throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
+                                "Không tìm thấy khóa học với ID: " + lessonDTO.getCourseId());
                     });
         }
-        // Nếu lessonDTO.getCourseId() là null, bạn có thể muốn giữ nguyên course hiện có hoặc ngắt liên kết.
-        // Ở đây, tôi giữ nguyên logic cũ là ném lỗi nếu courseId là null khi cập nhật, nhưng bạn có thể thay đổi.
+        // Nếu lessonDTO.getCourseId() là null, bạn có thể muốn giữ nguyên course hiện
+        // có hoặc ngắt liên kết.
+        // Ở đây, tôi giữ nguyên logic cũ là ném lỗi nếu courseId là null khi cập nhật,
+        // nhưng bạn có thể thay đổi.
 
         // Bỏ xử lý Module ở đây vì ModuleService đã được loại bỏ
         existingLesson.setModule(null); // Luôn đặt module là null khi cập nhật nếu không xử lý nó qua DTO này

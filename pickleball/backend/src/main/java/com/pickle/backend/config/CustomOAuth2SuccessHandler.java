@@ -3,6 +3,7 @@ package com.pickle.backend.config;
 import com.pickle.backend.entity.User;
 import com.pickle.backend.repository.UserRepository;
 import com.pickle.backend.service.JwtService;
+import org.springframework.beans.factory.annotation.Value;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -22,6 +23,9 @@ import java.util.UUID;
 @Component
 @Slf4j
 public class CustomOAuth2SuccessHandler implements AuthenticationSuccessHandler {
+
+    @Value("${frontend.url}")
+    private String frontendUrl;
 
     private final JwtService jwtService;
     private final UserRepository userRepository;
@@ -69,7 +73,7 @@ public class CustomOAuth2SuccessHandler implements AuthenticationSuccessHandler 
                     : "User registered successfully with ID: " + user.getUserId();
 
             // Redirect to /oauth2/redirect instead of /home
-            String redirectUrl = "http://localhost:5173/oauth2/redirect" +
+            String redirectUrl = frontendUrl + "/oauth2/redirect" +
                     "?token=" + URLEncoder.encode(token, StandardCharsets.UTF_8) +
                     "&role=" + URLEncoder.encode(user.getRole(), StandardCharsets.UTF_8) +
                     "&message=" + URLEncoder.encode(successMessage, StandardCharsets.UTF_8);
@@ -79,7 +83,7 @@ public class CustomOAuth2SuccessHandler implements AuthenticationSuccessHandler 
             log.error("Error in OAuth2 handler: ", e);
             String errorMessage = "Internal server error: " + e.getMessage();
             response.sendRedirect(
-                    "http://localhost:5173/login?error=" + URLEncoder.encode(errorMessage, StandardCharsets.UTF_8));
+                    frontendUrl + "/login?error=" + URLEncoder.encode(errorMessage, StandardCharsets.UTF_8));
         }
     }
 }

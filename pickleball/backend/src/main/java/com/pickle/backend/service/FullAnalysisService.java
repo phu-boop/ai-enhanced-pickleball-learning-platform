@@ -17,6 +17,7 @@ import jakarta.persistence.EntityManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
@@ -93,14 +94,17 @@ public class FullAnalysisService {
                 validateVideo(video);
                 // 1. Lưu file tạm vào TempUploads
                 tempVideoPath = saveVideoFileToDir(video, "TempUploads");
-                tempFile = new File("D:/LTJAVA/Project/PickleCoach-AI/pickleball/backend/" + tempVideoPath);
+                tempFile = new File(tempVideoPath);
 
                 // 2. Gọi Python API kiểm tra hợp lệ
                 analysisResponse = callEnhancedAnalysisAPI(tempVideoPath, userId);
                 if (analysisResponse == null || analysisResponse.containsKey("error")) {
                     // Xóa file tạm nếu không hợp lệ
-                    if (tempFile.exists()) tempFile.delete();
-                    String errMsg = analysisResponse != null && analysisResponse.get("error") != null ? analysisResponse.get("error").toString() : "Video không hợp lệ";
+                    if (tempFile.exists())
+                        tempFile.delete();
+                    String errMsg = analysisResponse != null && analysisResponse.get("error") != null
+                            ? analysisResponse.get("error").toString()
+                            : "Video không hợp lệ";
                     response.put("message", errMsg);
                     response.put("result", null);
                     return response;
@@ -125,7 +129,8 @@ public class FullAnalysisService {
         } catch (Exception e) {
             logger.error("Error in analyze method: {}", e.getMessage(), e);
             // Xóa file tạm nếu có lỗi
-            if (tempFile != null && tempFile.exists()) tempFile.delete();
+            if (tempFile != null && tempFile.exists())
+                tempFile.delete();
             response.put("message", "Phân tích video không thành công: " + e.getMessage());
             response.put("result", null);
             return response;
@@ -168,7 +173,7 @@ public class FullAnalysisService {
         String timestamp = String.valueOf(System.currentTimeMillis());
         String filename = timestamp + "_" + video.getOriginalFilename();
         String videoPath = dirName + "/" + filename;
-        String fullVideoPath = "D:/LTJAVA/Project/PickleCoach-AI/pickleball/backend/" + videoPath;
+        String fullVideoPath = videoPath;
 
         File videoFile = new File(fullVideoPath);
         File directory = videoFile.getParentFile();
@@ -187,7 +192,7 @@ public class FullAnalysisService {
         String timestamp = String.valueOf(System.currentTimeMillis());
         String filename = timestamp + "_" + originalFilename;
         String uploadsPath = "Uploads/" + filename;
-        String fullUploadsPath = "D:/LTJAVA/Project/PickleCoach-AI/pickleball/backend/" + uploadsPath;
+        String fullUploadsPath = uploadsPath;
         File uploadsFile = new File(fullUploadsPath);
         File uploadsDir = uploadsFile.getParentFile();
         if (!uploadsDir.exists() && !uploadsDir.mkdirs()) {
@@ -199,11 +204,14 @@ public class FullAnalysisService {
         return uploadsPath;
     }
 
+    @Value("${video.analysis.api.url}")
+    private String videoAnalysisApiUrl;
+
     private Map<String, Object> callEnhancedAnalysisAPI(String videoPath, String userId) { // Thay learnerId thành
                                                                                            // userId
         MultiValueMap<String, Object> request = new LinkedMultiValueMap<>();
         request.add("video",
-                new FileSystemResource(new File("D:/LTJAVA/Project/PickleCoach-AI/pickleball/backend/" + videoPath)));
+                new FileSystemResource(new File(videoPath)));
         request.add("userId", userId); // Thay learnerId thành userId
         request.add("analysisType", "enhanced");
 
@@ -213,7 +221,7 @@ public class FullAnalysisService {
 
         logger.debug("Sending enhanced analysis request to Python API");
         ResponseEntity<Map<String, Object>> response = restTemplate.exchange(
-                "http://localhost:5000/video-analysis-enhanced",
+                videoAnalysisApiUrl,
                 HttpMethod.POST,
                 entity,
                 new ParameterizedTypeReference<Map<String, Object>>() {
@@ -494,29 +502,30 @@ public class FullAnalysisService {
      * Lưu bài học đề xuất dựa trên kết quả phân tích video
      */
     @SuppressWarnings("unchecked")
-    private void saveVideoLessonRecommendations(String userId, Map<String, Object> analysisResponse, String videoAnalysisId) {
+    private void saveVideoLessonRecommendations(String userId, Map<String, Object> analysisResponse,
+            String videoAnalysisId) {
         try {
             // Lấy thông tin từ kết quả phân tích
             String skillLevel = (String) analysisResponse.get("skill_level");
             Double averageScore = (Double) analysisResponse.get("average_score");
-            
+
             Map<String, Object> shotAnalysis = (Map<String, Object>) analysisResponse.get("shotAnalysis");
-            List<String> weakestShots = shotAnalysis != null ? 
-                (List<String>) shotAnalysis.get("weakest_shots") : new ArrayList<>();
+            List<String> weakestShots = shotAnalysis != null ? (List<String>) shotAnalysis.get("weakest_shots")
+                    : new ArrayList<>();
 
             // Lấy bài học đề xuất
             List<Lesson> recommendedLessons = curriculumService.getRecommendedLessonsBasedOnAnalysis(
-                userId, skillLevel, weakestShots);
+                    userId, skillLevel, weakestShots);
 
             // Chuyển đổi thành JSON strings
             List<String> lessonIds = recommendedLessons.stream()
-                .map(lesson -> lesson.getId().toString())
-                .collect(Collectors.toList());
+                    .map(lesson -> lesson.getId().toString())
+                    .collect(Collectors.toList());
 
             // Tạo hoặc cập nhật VideoLessonRecommendation
             VideoLessonRecommendation recommendation = videoLessonRecommendationRepository
-                .findFirstByUserIdOrderByCreatedAtDesc(userId)
-                .orElse(new VideoLessonRecommendation());
+                    .findFirstByUserIdOrderByCreatedAtDesc(userId)
+                    .orElse(new VideoLessonRecommendation());
 
             recommendation.setUserId(userId);
             recommendation.setVideoAnalysisId(videoAnalysisId);
@@ -527,8 +536,8 @@ public class FullAnalysisService {
 
             videoLessonRecommendationRepository.save(recommendation);
 
-            logger.info("Đã lưu {} bài học đề xuất cho user {} dựa trên phân tích video", 
-                       recommendedLessons.size(), userId);
+            logger.info("Đã lưu {} bài học đề xuất cho user {} dựa trên phân tích video",
+                    recommendedLessons.size(), userId);
 
         } catch (Exception e) {
             logger.error("Lỗi khi lưu bài học đề xuất cho user {}: {}", userId, e.getMessage(), e);

@@ -118,7 +118,7 @@ export default function SearchSection() {
               <Button
                 children={"Join Pickleheads Now"}
                 className={'font-black py-3 px-7 text-lg'}
-                onClick={() => window.location.href = 'http://localhost:5173/input-assessment'}
+                onClick={() => window.location.href = '/input-assessment'}
               >
 
               </Button>

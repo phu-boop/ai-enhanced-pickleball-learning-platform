@@ -8,7 +8,7 @@ export async function analyzeVideo(learnerId, videoFile) {
   formData.append("video", videoFile);
 
   try {
-    const response = await fetch("http://localhost:8080/api/ai/full-analysis", {
+    const response = await fetch(`${import.meta.env.VITE_API_URL || 'http://localhost:8080'}/api/ai/full-analysis`, {
       method: "POST",
       body: formData,
     });

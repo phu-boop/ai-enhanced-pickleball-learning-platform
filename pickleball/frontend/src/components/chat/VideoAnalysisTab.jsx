@@ -1,5 +1,5 @@
-import React, {useRef, useState, useEffect} from "react";
-import {useNavigate} from "react-router-dom";
+import React, { useRef, useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import CourseCard from "../../modules/pages/learner/CourseCard";
 import Swal from "sweetalert2";
 import "./VideoAnalysisTab.css"; // Import file CSS mới
@@ -15,7 +15,7 @@ export default function VideoAnalysisTab() {
     const [recommendedCourses, setRecommendedCourses] = useState([]);
     const [selectedMistake, setSelectedMistake] = useState(null);
     const [showSaveModal, setShowSaveModal] = useState(false);
-    const [saveStatus, setSaveStatus] = useState({loading: false, message: ""});
+    const [saveStatus, setSaveStatus] = useState({ loading: false, message: "" });
     const [userId, setUserId] = useState(null);
     const inputRef = useRef();
 
@@ -40,7 +40,7 @@ export default function VideoAnalysisTab() {
         setDetectedShots([]);
         setRecommendedCourses([]);
         setSelectedMistake(null);
-        setSaveStatus({loading: false, message: ""});
+        setSaveStatus({ loading: false, message: "" });
     };
 
     const handleDrop = (e) => {
@@ -72,14 +72,14 @@ export default function VideoAnalysisTab() {
 
         try {
             setLoading(true);
-            const res = await fetch("http://localhost:8000/analyze", {
+            const res = await fetch(`${import.meta.env.VITE_AI_SERVICE_URL || 'http://localhost:8090'}/analyze`, {
                 method: "POST",
                 body: formData,
             });
 
             const data = await res.json();
             if (data.status === "success") {
-                setResultUrl(`http://localhost:8000${data.video_url}`);
+                setResultUrl(`${import.meta.env.VITE_AI_SERVICE_URL || 'http://localhost:8090'}${data.video_url}`);
                 setDetails(data.details);
                 setDetectedShots(data.details.detected_shots || []);
                 setRecommendedCourses(data.recommended_courses || []);
@@ -108,8 +108,8 @@ export default function VideoAnalysisTab() {
         if (!selectedMistake || !userId) return;
 
         try {
-            setSaveStatus({loading: true, message: ""});
-            const response = await fetch("http://localhost:8080/api/mistakes", {
+            setSaveStatus({ loading: true, message: "" });
+            const response = await fetch(`${import.meta.env.VITE_API_URL || 'http://localhost:8080'}/api/mistakes`, {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
@@ -123,10 +123,10 @@ export default function VideoAnalysisTab() {
             });
 
             if (response.ok) {
-                setSaveStatus({loading: false, message: "Lưu lỗi thành công!"});
+                setSaveStatus({ loading: false, message: "Lưu lỗi thành công!" });
                 setTimeout(() => {
                     setShowSaveModal(false);
-                    setSaveStatus({loading: false, message: ""});
+                    setSaveStatus({ loading: false, message: "" });
                 }, 1500);
             } else {
                 throw new Error("Lưu lỗi thất bại");
@@ -242,7 +242,7 @@ export default function VideoAnalysisTab() {
                     <svg className="error-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"
                         xmlns="http://www.w3.org/2000/svg">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2}
-                            d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                            d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
                     </svg>
                     <span>{errorMsg}</span>
                 </div>
@@ -256,7 +256,7 @@ export default function VideoAnalysisTab() {
                                 <svg className="section-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"
                                     xmlns="http://www.w3.org/2000/svg">
                                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2}
-                                        d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z"/>
+                                        d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z" />
                                 </svg>
                                 Video kết quả
                             </h3>
@@ -276,7 +276,7 @@ export default function VideoAnalysisTab() {
                                     <svg className="download-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"
                                         xmlns="http://www.w3.org/2000/svg">
                                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2}
-                                            d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/>
+                                            d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
                                     </svg>
                                     Tải video về
                                 </a>
@@ -291,7 +291,7 @@ export default function VideoAnalysisTab() {
                                     <svg className="section-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"
                                         xmlns="http://www.w3.org/2000/svg">
                                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2}
-                                            d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                                            d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
                                     </svg>
                                     Đánh giá kỹ thuật
                                 </h3>
@@ -317,7 +317,7 @@ export default function VideoAnalysisTab() {
                                             <svg className="points-icon" fill="none" stroke="currentColor"
                                                 viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2}
-                                                    d="M5 13l4 4L19 7"/>
+                                                    d="M5 13l4 4L19 7" />
                                             </svg>
                                             Điểm tốt
                                         </h4>
@@ -340,7 +340,7 @@ export default function VideoAnalysisTab() {
                                             <svg className="points-icon" fill="none" stroke="currentColor"
                                                 viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2}
-                                                    d="M6 18L18 6M6 6l12 12"/>
+                                                    d="M6 18L18 6M6 6l12 12" />
                                             </svg>
                                             Lỗi cần cải thiện
                                         </h4>
@@ -373,7 +373,7 @@ export default function VideoAnalysisTab() {
                                     <svg className="section-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"
                                         xmlns="http://www.w3.org/2000/svg">
                                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2}
-                                            d="M13 10V3L4 14h7v7l9-11h-7z"/>
+                                            d="M13 10V3L4 14h7v7l9-11h-7z" />
                                     </svg>
                                     Các cú đánh phát hiện
                                 </h3>
@@ -398,13 +398,13 @@ export default function VideoAnalysisTab() {
                                     <svg className="section-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"
                                         xmlns="http://www.w3.org/2000/svg">
                                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2}
-                                            d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"/>
+                                            d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
                                     </svg>
                                     Khóa học đề xuất
                                 </h3>
                                 <div className="courses-grid">
                                     {recommendedCourses.map((course, i) => (
-                                        <CourseCard key={i} course={course}/>
+                                        <CourseCard key={i} course={course} />
                                     ))}
                                 </div>
                             </div>
@@ -434,7 +434,7 @@ export default function VideoAnalysisTab() {
                                 <button
                                     onClick={() => {
                                         setShowSaveModal(false);
-                                        setSaveStatus({loading: false, message: ""});
+                                        setSaveStatus({ loading: false, message: "" });
                                     }}
                                     className="cancel-btn"
                                     disabled={saveStatus.loading}

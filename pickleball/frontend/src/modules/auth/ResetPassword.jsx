@@ -27,7 +27,7 @@ const ResetPassword = () => {
     return (
         <div className="relative flex justify-center items-center min-h-screen bg-gradient-to-br from-white to-[#dff5f9] px-4">
             <button
-                onClick={() => (window.location.href = 'http://localhost:5173/login')}
+                onClick={() => (window.location.href = '/login')}
                 className="absolute top-6 right-6 text-lg text-[#ea6645] border border-[#ea6645] px-5 py-2 rounded-full bg-[#ffe6e6] hover:bg-[#efc8c8] font-semibold shadow-sm"
             >
                 ✕ Cancel

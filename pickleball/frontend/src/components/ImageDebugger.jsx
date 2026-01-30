@@ -7,7 +7,7 @@ const ImageDebugger = () => {
   useEffect(() => {
     // Test các URL hình ảnh
     const testImages = [
-      'http://localhost:8080/images/logo.png',
+      `${import.meta.env.VITE_API_URL || 'http://localhost:8080'}/images/logo.png`,
       'https://images.unsplash.com/photo-1554068865-24cecd4e34b8?w=300&h=200&fit=crop',
       'https://via.placeholder.com/300x200/4F46E5/ffffff?text=Test'
     ];
@@ -17,7 +17,7 @@ const ImageDebugger = () => {
     // Fetch lessons từ API
     const fetchLessons = async () => {
       try {
-        const response = await fetch('http://localhost:8080/api/learners/test_user/recommended-lessons');
+        const response = await fetch(`${import.meta.env.VITE_API_URL || 'http://localhost:8080'}/api/learners/test_user/recommended-lessons`);
         const data = await response.json();
         setLessons(data);
 

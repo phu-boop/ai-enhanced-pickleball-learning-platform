@@ -28,8 +28,8 @@ public class VideoAnalysisController {
     @Autowired
     private FullAnalysisService fullAnalysisService;
 
-    @Value("${video.analysis.api.url:http://localhost:5000/video-analysis-enhanced}")
-    private String videoAnalysisApiUrl;
+    @Value("${video.analysis.api.url}")
+    private String videoAnalysisUrl;
 
     @PostMapping(value = "/full-analysis", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<?> fullAnalysis(

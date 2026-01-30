@@ -95,7 +95,6 @@ public class UserController {
     }
 
     @PostMapping("/forgot-password")
-    @CrossOrigin(origins = "http://localhost:5173")
     public ResponseEntity<Map<String, String>> forgotPassword(@RequestBody Map<String, String> request) {
         String email = request.get("email");
         ResponseEntity<String> response = userService.initiatePasswordReset(email);
