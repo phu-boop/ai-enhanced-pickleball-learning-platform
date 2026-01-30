@@ -8,9 +8,14 @@ RUN apt-get update && apt-get install -y \
     ffmpeg \
     libsm6 \
     libxext6 \
+    libgl1-mesa-glx \
+    libegl1-mesa \
     git \
     build-essential \
     && rm -rf /var/lib/apt/lists/*
+
+ENV GLOG_logtostderr=0
+ENV GLOG_minloglevel=2
 
 COPY requirements.txt ./
 RUN pip install --upgrade pip

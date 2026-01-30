@@ -16,8 +16,11 @@ def process_video(input_path, output_path):
     mp_pose = mp.solutions.pose
     pose = mp_pose.Pose()
 
-    cap = cv2.VideoCapture(input_path)
-    fps = cap.get(cv2.CAP_PROP_FPS) or 30.0
+    fps = cap.get(cv2.CAP_PROP_FPS)
+    if fps is None or fps <= 0 or fps > 120:
+        logging.warning(f"Cảnh báo: FPS phát hiện là {fps}, dùng giá trị mặc định 30.0")
+        fps = 30.0
+
     w = int(cap.get(cv2.CAP_PROP_FRAME_WIDTH))
     h = int(cap.get(cv2.CAP_PROP_FRAME_HEIGHT))
     total_frames = int(cap.get(cv2.CAP_PROP_FRAME_COUNT))
@@ -27,6 +30,11 @@ def process_video(input_path, output_path):
 
     out = cv2.VideoWriter(output_path, cv2.VideoWriter_fourcc(*'mp4v'), fps, (w, h))
     model = YOLO("yolov8n.pt")
+    # Force CPU for YOLO stability
+    try:
+        model.to('cpu')
+    except:
+        pass
     tracker = BallTracker()
 
     feedback_good = []
@@ -134,8 +142,8 @@ def process_video(input_path, output_path):
         # Ball tracking draw
         tracker.detect_and_draw_ball(frame, overlay, w, h, frame_idx)
 
-        # YOLO detection
-        results_yolo = model.predict(source=frame, conf=0.3, classes=None, verbose=False)
+        # YOLO detection - Explicitly use CPU
+        results_yolo = model.predict(source=frame, conf=0.3, classes=None, verbose=False, device='cpu')
         for result in results_yolo:
             for box in result.boxes:
                 x1, y1, x2, y2 = map(int, box.xyxy[0])
