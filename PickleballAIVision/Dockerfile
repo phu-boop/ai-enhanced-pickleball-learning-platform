@@ -8,8 +8,8 @@ RUN apt-get update && apt-get install -y \
     ffmpeg \
     libsm6 \
     libxext6 \
-    libgl1-mesa-glx \
-    libegl1-mesa \
+    libgl1 \
+    libegl1 \
     git \
     build-essential \
     && rm -rf /var/lib/apt/lists/*
