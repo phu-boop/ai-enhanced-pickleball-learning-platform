@@ -23,16 +23,20 @@ services:
         sync: false
       - key: OPENROUTER_API_KEY
         sync: false
-      - key: AI_SERVICE_URL_INTERNAL
+      - key: AI_SERVICE_HOST
         fromService:
           name: picklecoach-aivision
           type: web
           property: host
-      - key: FRONTEND_URL_PUBLIC
+      - key: AI_SERVICE_URL_INTERNAL
+        value: http://${AI_SERVICE_HOST}
+      - key: FRONTEND_HOST
         fromService:
           name: picklecoach-frontend
           type: web
-          property: url
+          property: host
+      - key: FRONTEND_URL_PUBLIC
+        value: https://${FRONTEND_HOST}
 
   # 2. AI Vision Service (Python Fast API)
   - type: web
@@ -62,13 +66,17 @@ services:
     buildCommand: npm install && npm run build
     staticPublishPath: dist
     envVars:
-      - key: VITE_API_URL
+      - key: BACKEND_HOST
         fromService:
           name: picklecoach-backend
           type: web
-          property: url
-      - key: VITE_AI_SERVICE_URL
+          property: host
+      - key: VITE_API_URL
+        value: https://${BACKEND_HOST}
+      - key: AI_SERVICE_HOST
         fromService:
           name: picklecoach-aivision
           type: web
-          property: url
+          property: host
+      - key: VITE_AI_SERVICE_URL
+        value: https://${AI_SERVICE_HOST}
