@@ -9,8 +9,7 @@ services:
     envVars:
       - key: DB_HOST
         sync: false # Set manually or via Railway details
-      - key: DB_PORT
-        value: 3306
+
       - key: DB_NAME
         sync: false
       - key: DB_USER
