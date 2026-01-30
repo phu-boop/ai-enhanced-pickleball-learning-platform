@@ -31,7 +31,7 @@ services:
       - key: FRONTEND_URL_PUBLIC
         fromService:
           name: picklecoach-frontend
-          type: static_site
+          type: web
           property: url
 
   # 2. AI Vision Service (Python Fast API)
@@ -55,11 +55,12 @@ services:
         sync: false
 
   # 4. Frontend (React Static Site)
-  - type: static_site
+  - type: web
     name: picklecoach-frontend
+    runtime: static
     rootDir: pickleball/frontend
     buildCommand: npm install && npm run build
-    publishDir: dist
+    staticPublishPath: dist
     envVars:
       - key: VITE_API_URL
         fromService:
