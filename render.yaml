@@ -55,6 +55,7 @@ services:
     runtime: docker
     rootDir: PickleballAIVision
     plan: free
+    port: 8000
     envVars:
       - key: OPENROUTER_API_KEY
         sync: false
