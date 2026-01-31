@@ -17,6 +17,11 @@ def process_video(input_path, output_path):
     pose = mp_pose.Pose()
 
     cap = cv2.VideoCapture(input_path)
+    if not cap.isOpened():
+        logging.error(f"Error: Could not open video file {input_path}")
+        raise ValueError(f"Could not open video file {input_path}")
+    
+    logging.debug(f"Video captured successfully: {cap}")
     fps = cap.get(cv2.CAP_PROP_FPS)
     if fps is None or fps <= 0 or fps > 120:
         logging.warning(f"Cảnh báo: FPS phát hiện là {fps}, dùng giá trị mặc định 30.0")
