@@ -44,6 +44,15 @@ os.makedirs(OUTPUT_DIR, exist_ok=True)
 
 app.mount("/outputs", StaticFiles(directory=OUTPUT_DIR), name="outputs")
 
+@app.get("/")
+async def root():
+    return {"message": "PickleCoach AI Vision API is running", "status": "healthy"}
+
+@app.get("/health")
+async def health():
+    return {"status": "healthy"}
+
+
 def run_analysis_task(job_id: str, input_path: str, raw_output_path: str, final_output_path: str, final_output_filename: str):
     try:
         jobs[job_id]["status"] = "processing"

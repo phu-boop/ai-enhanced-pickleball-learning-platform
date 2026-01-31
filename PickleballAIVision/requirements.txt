@@ -1,9 +1,11 @@
+--extra-index-url https://download.pytorch.org/whl/cpu
 fastapi
 uvicorn==0.23.2
 opencv-python-headless
 mediapipe==0.10.9
 python-multipart
 ultralytics>=8.0.0
+torch
+torchvision
 requests
-sentence-transformers
 aiofiles

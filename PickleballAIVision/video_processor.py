@@ -25,7 +25,12 @@ try:
     mp_pose = mp.solutions.pose
     pose = mp_pose.Pose()
     
-    model = YOLO("yolov8n.pt")
+    # Use absolute path to the pre-downloaded model in Docker
+    model_path = os.path.join(os.getcwd(), "yolov8n.pt")
+    if not os.path.exists(model_path):
+        model_path = "yolov8n.pt" # Fallback to auto-download if missing
+    
+    model = YOLO(model_path)
     # Force CPU to save RAM and avoid GPU-related issues on Render Free Tier
     try:
         model.to('cpu')
