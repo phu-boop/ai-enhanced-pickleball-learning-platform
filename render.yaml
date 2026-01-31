@@ -5,6 +5,7 @@ services:
     runtime: docker
     rootDir: pickleball/backend
     plan: free
+    port: 8080
     healthCheckPath: /actuator/health
     envVars:
       - key: DB_HOST
