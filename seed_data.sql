@@ -1,10 +1,10 @@
 -- SQL Seed Data for PickleCoach-AI
--- Standardized to Hibernate's CamelCaseToUnderscoresNamingStrategy (snake_case)
--- Passwords are hashed using BCrypt (password: password123)
+-- Final Strict Version: Matches exact Backend Entity fields and Hibernate snake_case mapping
+-- Passwords: password123
 
 SET FOREIGN_KEY_CHECKS = 0;
 
--- Delete in reverse dependency order (Children first)
+-- Cleanup Children first
 DELETE FROM debts;
 
 DELETE FROM sessions;
@@ -25,7 +25,7 @@ DELETE FROM modules;
 
 DELETE FROM courses;
 
--- 1. Users (Roles: ADMIN, COACH, USER)
+-- 1. Users (NO created_at field in User entity)
 INSERT INTO
     users (
         user_id,
@@ -35,8 +35,7 @@ INSERT INTO
         role,
         skill_level,
         login_type,
-        url_avata,
-        created_at
+        url_avata
     )
 VALUES
     -- Admins
@@ -48,8 +47,7 @@ VALUES
         'ADMIN',
         'ADVANCED',
         'LOCAL',
-        'https://images.unsplash.com/photo-1560250097-0b93528c311a?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80',
-        NOW()
+        'https://images.unsplash.com/photo-1560250097-0b93528c311a?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80'
     ),
     -- Coaches
     (
@@ -60,8 +58,7 @@ VALUES
         'COACH',
         'ADVANCED',
         'LOCAL',
-        'https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80',
-        NOW()
+        'https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80'
     ),
     (
         'u3-coach-uuid-0000-000000000003',
@@ -71,8 +68,7 @@ VALUES
         'COACH',
         'ADVANCED',
         'LOCAL',
-        'https://images.unsplash.com/photo-1569913486515-b74bf7751574?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80',
-        NOW()
+        'https://images.unsplash.com/photo-1569913486515-b74bf7751574?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80'
     ),
     -- Learners
     (
@@ -83,8 +79,7 @@ VALUES
         'USER',
         'BEGINNER',
         'LOCAL',
-        'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80',
-        NOW()
+        'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80'
     ),
     (
         'u5-learner-uuid-0000-000000000005',
@@ -94,8 +89,7 @@ VALUES
         'USER',
         'INTERMEDIATE',
         'LOCAL',
-        'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80',
-        NOW()
+        'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80'
     );
 
 -- 2. Coaches
@@ -116,7 +110,7 @@ INSERT INTO
         user_id,
         goals,
         progress,
-        skill_level -- skillLevel in JPA -> skill_level in DB
+        skill_level
     )
 VALUES (
         'u4-learner-uuid-0000-000000000004',
@@ -131,7 +125,7 @@ VALUES (
         'INTERMEDIATE'
     );
 
--- 4. Courses
+-- 4. Courses (HAS created_at)
 INSERT INTO
     courses (
         id,
@@ -158,7 +152,7 @@ VALUES (
         NOW()
     );
 
--- 5. Modules
+-- 5. Modules (NO created_at)
 INSERT INTO
     modules (
         id,
@@ -182,7 +176,7 @@ VALUES (
         2
     );
 
--- 6. Lessons
+-- 6. Lessons (HAS created_at)
 INSERT INTO
     lessons (
         id,
@@ -230,7 +224,7 @@ VALUES (
         NOW()
     );
 
--- 7. Questions
+-- 7. Questions (NO created_at)
 INSERT INTO
     question (
         id,
@@ -265,12 +259,12 @@ VALUES (1, 'Vùng cấm giao bóng', 0, 1),
         1
     );
 
--- 9. Sessions
+-- 9. Sessions (HAS created_at)
 INSERT INTO
     sessions (
-        session_id, -- sessionId in JPA -> session_id in DB
-        learner_id, -- learnerId in JPA -> learner_id in DB
-        coach_id, -- coachId in JPA -> coach_id in DB
+        session_id,
+        learner_id,
+        coach_id,
         datetime,
         status,
         pakage,
@@ -295,7 +289,7 @@ VALUES (
         NOW()
     );
 
--- 10. Debts
+-- 10. Debts (NO created_at)
 INSERT INTO
     debts (
         id,
