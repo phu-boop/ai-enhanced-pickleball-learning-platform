@@ -5,9 +5,10 @@ services:
     runtime: docker
     rootDir: pickleball/backend
     plan: free
-    port: 8080
     healthCheckPath: /actuator/health
     envVars:
+      - key: PORT
+        value: 8080
       - key: DB_HOST
         sync: false # Set manually or via Railway details
 
@@ -56,8 +57,9 @@ services:
     runtime: docker
     rootDir: PickleballAIVision
     plan: free
-    port: 8000
     envVars:
+      - key: PORT
+        value: 8000
       - key: OPENROUTER_API_KEY
         sync: false
 
