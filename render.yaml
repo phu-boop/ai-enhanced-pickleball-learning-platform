@@ -76,6 +76,10 @@ services:
     rootDir: pickleball/frontend
     buildCommand: npm install && npm run build
     staticPublishPath: dist
+    routes:
+      - type: rewrite
+        source: /*
+        destination: /index.html
     envVars:
       - key: BACKEND_HOST
         fromService:
