@@ -1,5 +1,5 @@
 -- SQL Seed Data for PickleCoach-AI
--- Strictly matched to Backend Entity Schema
+-- Standardized to Hibernate's CamelCaseToUnderscoresNamingStrategy (snake_case)
 -- Passwords are hashed using BCrypt (password: password123)
 
 SET FOREIGN_KEY_CHECKS = 0;
@@ -28,7 +28,7 @@ DELETE FROM courses;
 -- 1. Users (Roles: ADMIN, COACH, USER)
 INSERT INTO
     users (
-        userId,
+        user_id,
         name,
         email,
         password,
@@ -100,7 +100,7 @@ VALUES
 
 -- 2. Coaches
 INSERT INTO
-    coaches (userId, level)
+    coaches (user_id, level)
 VALUES (
         'u2-coach-uuid-0000-000000000002',
         'ADVANCED'
@@ -113,10 +113,10 @@ VALUES (
 -- 3. Learners
 INSERT INTO
     learners (
-        userId,
+        user_id,
         goals,
         progress,
-        skillLevel
+        skill_level -- skillLevel in JPA -> skill_level in DB
     )
 VALUES (
         'u4-learner-uuid-0000-000000000004',
@@ -268,9 +268,9 @@ VALUES (1, 'Vùng cấm giao bóng', 0, 1),
 -- 9. Sessions
 INSERT INTO
     sessions (
-        sessionId,
-        learnerId,
-        coachId,
+        session_id, -- sessionId in JPA -> session_id in DB
+        learner_id, -- learnerId in JPA -> learner_id in DB
+        coach_id, -- coachId in JPA -> coach_id in DB
         datetime,
         status,
         pakage,
