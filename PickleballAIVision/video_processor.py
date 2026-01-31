@@ -2,6 +2,7 @@ import logging
 logging.basicConfig(level=logging.DEBUG, format="%(asctime)s [%(levelname)s] %(message)s")
 logging.getLogger().setLevel(logging.DEBUG)  
 import cv2
+import os
 import mediapipe as mp
 import numpy as np
 from config import *
