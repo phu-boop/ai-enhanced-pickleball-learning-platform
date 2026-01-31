@@ -5,8 +5,6 @@
 SET FOREIGN_KEY_CHECKS = 0;
 
 -- Delete in reverse dependency order (Children first)
-DELETE FROM enrollments;
--- If exists
 DELETE FROM debts;
 
 DELETE FROM sessions;
@@ -1431,82 +1429,6 @@ VALUES (
         NOW()
     );
 
--- 11. Enrollment (Additional table if exists)
--- Assuming there's an enrollment table linking learners to courses
-INSERT INTO
-    enrollments (
-        learner_id,
-        course_id,
-        enrolled_date,
-        completion_percentage,
-        last_accessed,
-        status
-    )
-VALUES (
-        'u4-learner-uuid-0000-000000000004',
-        1,
-        '2024-01-20',
-        40,
-        '2024-02-09',
-        'ACTIVE'
-    ),
-    (
-        'u5-learner-uuid-0000-000000000005',
-        2,
-        '2023-12-01',
-        75,
-        '2024-02-10',
-        'ACTIVE'
-    ),
-    (
-        'u8-learner-uuid-0000-000000000008',
-        1,
-        '2024-02-05',
-        10,
-        '2024-02-08',
-        'ACTIVE'
-    ),
-    (
-        'u9-learner-uuid-0000-000000000009',
-        4,
-        '2024-01-05',
-        60,
-        '2024-02-12',
-        'ACTIVE'
-    ),
-    (
-        'u10-learner-uuid-0000-0000000010',
-        3,
-        '2023-10-15',
-        90,
-        '2024-02-11',
-        'ACTIVE'
-    ),
-    (
-        'u12-learner-uuid-0000-0000000012',
-        2,
-        '2024-01-12',
-        50,
-        '2024-02-14',
-        'ACTIVE'
-    ),
-    (
-        'u4-learner-uuid-0000-000000000004',
-        5,
-        '2024-02-01',
-        25,
-        '2024-02-09',
-        'ACTIVE'
-    ),
-    (
-        'u5-learner-uuid-0000-000000000005',
-        5,
-        '2024-01-20',
-        80,
-        '2024-02-10',
-        'ACTIVE'
-    );
-
 -- Display completion message
 SELECT 'Seed data inserted successfully!' AS message;
 
@@ -1544,4 +1466,6 @@ SELECT
         SELECT COUNT(*)
         FROM debts
     ) as total_debts
-FROM users;SET FOREIGN_KEY_CHECKS = 1;
+FROM users;
+
+SET FOREIGN_KEY_CHECKS = 1;
