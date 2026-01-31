@@ -14,7 +14,7 @@ export default function QuizApp() {
     const fetchQuizQuestions = async () => {
       try {
         const response = await getQuiz();
-
+        const quizQuestions = Array.isArray(response.data) ? response.data : [];
         setQuestions(quizQuestions);
         setLoading(false);
       } catch (err) {
