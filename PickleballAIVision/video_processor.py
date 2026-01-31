@@ -12,9 +12,48 @@ from ball_tracker import BallTracker
 from feedback import detect_shot_type_and_feedback
 from PIL import Image, ImageDraw, ImageFont
 
-def process_video(input_path, output_path):
+# --- Global Initialization (Pre-load models to avoid 504 timeouts) ---
+logging.info("Initializing Global Models...")
+
+# Initialize placeholders to avoid UnboundLocalError
+mp_pose = None
+pose = None
+model = None
+font = None
+
+try:
     mp_pose = mp.solutions.pose
     pose = mp_pose.Pose()
+    
+    model = YOLO("yolov8n.pt")
+    # Force CPU to save RAM and avoid GPU-related issues on Render Free Tier
+    try:
+        model.to('cpu')
+    except:
+        pass
+    
+    # Pre-load font for better performance
+    try:
+        font = ImageFont.truetype("arial.ttf", 20)
+    except:
+        try:
+            font = ImageFont.truetype("roboto.ttf", 20)
+        except:
+            logging.warning("No standard fonts found, using default font")
+            font = ImageFont.load_default()
+            
+    logging.info("Global Models Initialized Successfully")
+except Exception as e:
+    logging.error(f"Failed to initialize global models: {str(e)}")
+
+def process_video(input_path, output_path):
+    # Ensure models are available
+    if pose is None or model is None:
+        logging.error("AI Models failed to initialize. Check logs.")
+        raise RuntimeError("AI Models are not initialized.")
+    # Models are now global
+    # mp_pose = mp.solutions.pose
+    # pose = mp_pose.Pose()
 
     cap = cv2.VideoCapture(input_path)
     if not cap.isOpened():
@@ -35,12 +74,7 @@ def process_video(input_path, output_path):
     logging.info(f"Video resolution: {w}x{h}, FPS: {fps}")
 
     out = cv2.VideoWriter(output_path, cv2.VideoWriter_fourcc(*'mp4v'), fps, (w, h))
-    model = YOLO("yolov8n.pt")
-    # Force CPU for YOLO stability
-    try:
-        model.to('cpu')
-    except:
-        pass
+    # model and pose are now global
     tracker = BallTracker()
 
     feedback_good = []
@@ -96,15 +130,8 @@ def process_video(input_path, output_path):
             overlay_pil = Image.fromarray(cv2.cvtColor(overlay, cv2.COLOR_BGR2RGB))
             draw = ImageDraw.Draw(overlay_pil)
 
-            # Tải font hỗ trợ tiếng Việt
-            try:
-                font = ImageFont.truetype("arial.ttf", 20)
-            except:
-                try:
-                    font = ImageFont.truetype("roboto.ttf", 20)
-                except:
-                    logging.warning("Không tìm thấy arial.ttf hoặc roboto.ttf, dùng font mặc định")
-                    font = ImageFont.load_default()
+            # Font is pre-loaded at the module level
+
 
             # Biến để theo dõi vị trí y
             y_offset = 10  # Bắt đầu từ 10 pixel từ trên cùng
@@ -170,7 +197,8 @@ def process_video(input_path, output_path):
 
     cap.release()
     out.release()
-    pose.close()
+    # Let pose stay open globally or close it explicitly if needed (but global is better for reuse)
+    # pose.close()
 
     detected_shot = detected_shots[-1] if detected_shots else None
 

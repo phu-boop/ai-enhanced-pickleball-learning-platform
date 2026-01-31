@@ -6,3 +6,4 @@ python-multipart
 ultralytics>=8.0.0
 requests
 sentence-transformers
+aiofiles

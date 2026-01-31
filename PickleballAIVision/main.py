@@ -10,6 +10,7 @@ import uuid
 import os
 import traceback
 import asyncio
+import aiofiles
 from video_processor import process_video
 from converter import convert_to_browser_compatible
 from course_analyzer import recommend_courses
@@ -101,9 +102,16 @@ async def analyze(background_tasks: BackgroundTasks, file: UploadFile = File(...
     final_output_filename = f"{job_id}_annotated.mp4"
     final_output_path = os.path.join(OUTPUT_DIR, final_output_filename)
 
-    # Save file immediately
-    with open(input_path, "wb") as buffer:
-        shutil.copyfileobj(file.file, buffer)
+    # Save file immediately using aiofiles to avoid blocking the event loop
+    logging.info(f"Starting async upload for job {job_id}")
+    try:
+        async with aiofiles.open(input_path, "wb") as buffer:
+            while content := await file.read(1024 * 1024):  # Read in 1MB chunks
+                await buffer.write(content)
+        logging.info(f"File saved successfully for job {job_id}")
+    except Exception as e:
+        logging.error(f"Failed to save file for job {job_id}: {str(e)}")
+        return JSONResponse({"status": "error", "message": "Failed to save upload file"}, status_code=500)
 
     # Initialize job status
     jobs[job_id] = {"status": "pending", "result": None}
