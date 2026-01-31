@@ -16,6 +16,7 @@ def process_video(input_path, output_path):
     mp_pose = mp.solutions.pose
     pose = mp_pose.Pose()
 
+    cap = cv2.VideoCapture(input_path)
     fps = cap.get(cv2.CAP_PROP_FPS)
     if fps is None or fps <= 0 or fps > 120:
         logging.warning(f"Cảnh báo: FPS phát hiện là {fps}, dùng giá trị mặc định 30.0")
