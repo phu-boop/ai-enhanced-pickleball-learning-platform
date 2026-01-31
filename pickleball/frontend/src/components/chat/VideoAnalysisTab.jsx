@@ -17,7 +17,18 @@ export default function VideoAnalysisTab() {
     const [showSaveModal, setShowSaveModal] = useState(false);
     const [saveStatus, setSaveStatus] = useState({ loading: false, message: "" });
     const [userId, setUserId] = useState(null);
+    const [jobId, setJobId] = useState(null);
+    const [currentTipIndex, setCurrentTipIndex] = useState(0);
     const inputRef = useRef();
+
+    const PRO_TIPS = [
+        "Mẹo: Hãy giữ cổ tay ổn định khi thực hiện cú Dink để kiểm soát bóng tốt hơn.",
+        "Mẹo: Di chuyển lên lưới (Kitchen line) ngay sau cú giao bóng hoặc trả bóng sâu.",
+        "Mẹo: Sử dụng cú 'Third Shot Drop' để vô hiệu hóa sức mạnh của đối thủ.",
+        "Mẹo: Giao bóng sâu về phía cuối sân để hạn chế khả năng tấn công của đối phương.",
+        "Mẹo: Luôn giữ vợt ở phía trước ngực để sẵn sàng phản xạ nhanh.",
+        "Mẹo: Giao tiếp với đồng đội bằng các khẩu lệnh 'Yours' hoặc 'Mine' để tránh va chạm."
+    ];
 
     // Lấy userId từ session store khi component mount
     useEffect(() => {
@@ -33,6 +44,18 @@ export default function VideoAnalysisTab() {
         }
         setUserId(userData);
     }, [navigate]);
+
+    // Xoay vòng Pro-tips khi đang xử lý
+    useEffect(() => {
+        let tipInterval;
+        if (loading) {
+            tipInterval = setInterval(() => {
+                setCurrentTipIndex((prev) => (prev + 1) % PRO_TIPS.length);
+            }, 5000);
+        }
+        return () => clearInterval(tipInterval);
+    }, [loading]);
+
     const resetResults = () => {
         setResultUrl("");
         setErrorMsg("");
@@ -41,6 +64,7 @@ export default function VideoAnalysisTab() {
         setRecommendedCourses([]);
         setSelectedMistake(null);
         setSaveStatus({ loading: false, message: "" });
+        setJobId(null);
     };
 
     const handleDrop = (e) => {
@@ -72,27 +96,66 @@ export default function VideoAnalysisTab() {
 
         try {
             setLoading(true);
-            const res = await fetch(`${import.meta.env.VITE_AI_SERVICE_URL || 'http://localhost:8090'}/analyze`, {
+            setErrorMsg("");
+            resetResults();
+
+            const aiServiceUrl = import.meta.env.VITE_AI_SERVICE_URL || 'https://picklecoach-aivision.onrender.com';
+
+            // 1. Send analysis request
+            const res = await fetch(`${aiServiceUrl}/analyze`, {
                 method: "POST",
                 body: formData,
             });
 
+            if (!res.ok) throw new Error("Gửi video thất bại");
+
             const data = await res.json();
-            if (data.status === "success") {
-                setResultUrl(`${import.meta.env.VITE_AI_SERVICE_URL || 'http://localhost:8090'}${data.video_url}`);
-                setDetails(data.details);
-                setDetectedShots(data.details.detected_shots || []);
-                setRecommendedCourses(data.recommended_courses || []);
-                setErrorMsg("");
-            } else {
-                setErrorMsg("Phân tích thất bại.");
-            }
+            const newJobId = data.job_id;
+            setJobId(newJobId);
+
+            // 2. Start Polling
+            pollJobStatus(newJobId, aiServiceUrl);
+
         } catch (err) {
             console.error(err);
-            setErrorMsg("Lỗi khi gửi video.");
-        } finally {
+            setErrorMsg("Lỗi khi gửi video: " + err.message);
             setLoading(false);
         }
+    };
+
+    const pollJobStatus = async (id, baseUrl) => {
+        const poll = async () => {
+            try {
+                const res = await fetch(`${baseUrl}/status/${id}`);
+                const data = await res.json();
+
+                if (data.status === "success") {
+                    const result = data.result;
+                    setResultUrl(`${baseUrl}${result.video_url}`);
+                    setDetails(result.details);
+                    setDetectedShots(result.details.detected_shots || []);
+                    setRecommendedCourses(result.recommended_courses || []);
+                    setLoading(false);
+                    return true; // Stop polling
+                } else if (data.status === "error") {
+                    setErrorMsg("Phân tích lỗi: " + (data.message || "Không rõ nguyên nhân"));
+                    setLoading(false);
+                    return true;
+                }
+                return false; // Continue polling
+            } catch (err) {
+                console.error("Polling error:", err);
+                return false;
+            }
+        };
+
+        const intervalId = setInterval(async () => {
+            const shouldStop = await poll();
+            if (shouldStop) clearInterval(intervalId);
+        }, 3000);
+
+        // Run immediately the first time
+        poll();
     };
 
     const handleSaveMistake = (mistake) => {
@@ -224,18 +287,30 @@ export default function VideoAnalysisTab() {
                     className={`video-upload-btn ${!file || loading ? "disabled" : ""}`}
                     disabled={!file || loading}
                 >
-                    {loading ? (
-                        <span className="btn-loading">
-                            <svg className="spinner" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                                <circle className="spinner-circle" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-                                <path className="spinner-path" fill="currentColor"
-                                    d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                            </svg>
-                            Đang phân tích...
-                        </span>
-                    ) : "Bắt đầu phân tích"}
+                    {loading ? "Đang xử lý..." : "Bắt đầu phân tích"}
                 </button>
             </form>
+
+            {loading && (
+                <div className="ai-processing-overlay">
+                    <div className="ai-processing-content">
+                        <div className="ai-loader-container">
+                            <div className="ai-loader-pulse"></div>
+                            <div className="ai-loader-spin"></div>
+                            <div className="ai-loader-icon">🤖</div>
+                        </div>
+                        <h3 className="processing-text">AI đang phân tích video của bạn...</h3>
+                        <p className="processing-subtext">Quá trình này có thể mất 1-2 phút tùy vào độ dài video.</p>
+
+                        <div className="pro-tip-container">
+                            <div className="pro-tip-card">
+                                <span className="pro-tip-label">HỌC TRONG KHI CHỜ ĐỢI</span>
+                                <p className="pro-tip-text">{PRO_TIPS[currentTipIndex]}</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            )}
 
             {errorMsg && (
                 <div className="video-error-msg">

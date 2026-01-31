@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 import logging
 import warnings
-from fastapi import FastAPI, UploadFile, File
+from fastapi import FastAPI, UploadFile, File, BackgroundTasks
 from fastapi.responses import JSONResponse
 from fastapi.staticfiles import StaticFiles
 from fastapi.middleware.cors import CORSMiddleware
@@ -9,9 +9,13 @@ import shutil
 import uuid
 import os
 import traceback
+import asyncio
 from video_processor import process_video
 from converter import convert_to_browser_compatible
 from course_analyzer import recommend_courses
+
+# Job tracking
+jobs = {}
 
 # Configure logging
 logging.basicConfig(
@@ -39,54 +43,86 @@ os.makedirs(OUTPUT_DIR, exist_ok=True)
 
 app.mount("/outputs", StaticFiles(directory=OUTPUT_DIR), name="outputs")
 
-@app.post("/analyze")
-async def analyze(file: UploadFile = File(...)):
-    file_id = str(uuid.uuid4())
-    input_path = os.path.join(UPLOAD_DIR, f"{file_id}.mp4")
-    raw_output_path = os.path.join(UPLOAD_DIR, f"{file_id}_raw.mp4")
-    final_output_filename = f"{file_id}_annotated.mp4"
-    final_output_path = os.path.join(OUTPUT_DIR, final_output_filename)
-
+def run_analysis_task(job_id: str, input_path: str, raw_output_path: str, final_output_path: str, final_output_filename: str):
     try:
-        with open(input_path, "wb") as buffer:
-            shutil.copyfileobj(file.file, buffer)
-
+        jobs[job_id]["status"] = "processing"
+        
+        # 1. Process video
         result = process_video(input_path, raw_output_path)
-
+        
+        # 2. Convert to browser compatible
         convert_to_browser_compatible(raw_output_path, final_output_path)
-
+        
+        # 3. Analyze results
         feedback_errors = result.get("errors", [])
-        detected_shots = result.get("detected_shots", [])  # Danh sách {type, time}
-        detected_shot = result.get("detected_shot")  # Lấy cú đánh cuối
-
+        detected_shots = result.get("detected_shots", [])
+        detected_shot = result.get("detected_shot")
         recommendations = recommend_courses(feedback_errors, detected_shot)
-
-        return JSONResponse({
+        
+        # 4. Save result
+        jobs[job_id].update({
             "status": "success",
-            "video_url": f"/outputs/{final_output_filename}",
-            "details": {
-                "frame_count": result.get("frame_count", 0),
-                "good_points": result.get("good_points", []),
-                "errors": result.get("errors", []),
-                "detected_shots": result.get("detected_shots", []),
-                "detected_shot": result.get("detected_shot")
-            },
-            "recommended_courses": recommendations
+            "result": {
+                "status": "success",
+                "video_url": f"/outputs/{final_output_filename}",
+                "details": {
+                    "frame_count": result.get("frame_count", 0),
+                    "good_points": result.get("good_points", []),
+                    "errors": result.get("errors", []),
+                    "detected_shots": result.get("detected_shots", []),
+                    "detected_shot": result.get("detected_shot")
+                },
+                "recommended_courses": recommendations
+            }
         })
-
+        logging.info(f"Job {job_id} finished successfully")
 
     except Exception as e:
-        logging.error(f"Error: {str(e)}\n{traceback.format_exc()}")
-        return JSONResponse({
+        error_msg = str(e)
+        trace = traceback.format_exc()
+        logging.error(f"Job {job_id} failed: {error_msg}\n{trace}")
+        jobs[job_id].update({
             "status": "error",
-            "message": str(e),
-            "details": traceback.format_exc(),
-            "recommended_courses": [],
-            "detected_shots": []
-        }, status_code=500)
-
+            "message": error_msg,
+            "details": trace
+        })
     finally:
+        # Cleanup input files
         if os.path.exists(input_path):
             os.remove(input_path)
         if os.path.exists(raw_output_path):
             os.remove(raw_output_path)
+
+@app.post("/analyze")
+async def analyze(background_tasks: BackgroundTasks, file: UploadFile = File(...)):
+    job_id = str(uuid.uuid4())
+    input_path = os.path.join(UPLOAD_DIR, f"{job_id}.mp4")
+    raw_output_path = os.path.join(UPLOAD_DIR, f"{job_id}_raw.mp4")
+    final_output_filename = f"{job_id}_annotated.mp4"
+    final_output_path = os.path.join(OUTPUT_DIR, final_output_filename)
+
+    # Save file immediately
+    with open(input_path, "wb") as buffer:
+        shutil.copyfileobj(file.file, buffer)
+
+    # Initialize job status
+    jobs[job_id] = {"status": "pending", "result": None}
+
+    # Start background task
+    background_tasks.add_task(
+        run_analysis_task, 
+        job_id, 
+        input_path, 
+        raw_output_path, 
+        final_output_path, 
+        final_output_filename
+    )
+
+    return {"job_id": job_id, "status": "pending"}
+
+@app.get("/status/{job_id}")
+async def get_status(job_id: str):
+    if job_id not in jobs:
+        return JSONResponse({"status": "error", "message": "Job not found"}, status_code=404)
+    
+    return jobs[job_id]
