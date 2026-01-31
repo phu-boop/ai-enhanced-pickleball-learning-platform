@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { FaFacebookF, FaGoogle, FaApple } from 'react-icons/fa';
 import ApiRegister from '../../api/auth'; // Import hàm gọi API
-import { Navigate, useNavigate } from 'react-router-dom';
+import { Navigate, useNavigate, Link } from 'react-router-dom';
 import Alert from '../../components/Alert'; // Import Alert component if needed
 import { FaEye, FaEyeSlash } from 'react-icons/fa'; // Import biểu tượng con mắt
 const SignUp = () => {
