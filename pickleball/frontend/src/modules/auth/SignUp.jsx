@@ -141,9 +141,9 @@ const SignUp = () => {
           Already have an account?
         </p>
         <p className="text-lg font-bold text-center mt-2">
-          <a href="/login" className="text-[#2c8fa8] font-semibold hover:underline">
+          <Link to="/login" className="text-[#2c8fa8] font-semibold hover:underline">
             Sign in!
-          </a>
+          </Link>
         </p>
       </div>
       <div className="absolute top-10 right-8">

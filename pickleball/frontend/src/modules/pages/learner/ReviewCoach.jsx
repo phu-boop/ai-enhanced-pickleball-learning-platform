@@ -77,20 +77,18 @@ const ReviewCoach = () => {
         {/* Right section: Image/video placeholder */}
         <div className="md:w-1/2 mt-6 md:mt-0">
           <div className="relative bg-while rounded-lg shadow-lg p-4">
-            <a href="">
-              <div className="relative">
-                <img
-                  src="https://cdn.filestackcontent.com/FX2E1IWSSHikp7fhAfwo" // Replace with actual image URL if available
-                  alt="Coach illustration"
-                  className="w-full h-auto rounded-lg"
-                />
-                <div className="absolute inset-0 flex items-center justify-center">
-                  <div className="bg-[#2d93ad] text-white rounded-full w-16 h-16 flex items-center justify-center transition duration-300 cursor-pointer">
-                    <span className="text-3xl">▶</span>
-                  </div>
+            <div className="relative">
+              <img
+                src="https://cdn.filestackcontent.com/FX2E1IWSSHikp7fhAfwo" // Replace with actual image URL if available
+                alt="Coach illustration"
+                className="w-full h-auto rounded-lg"
+              />
+              <div className="absolute inset-0 flex items-center justify-center">
+                <div className="bg-[#2d93ad] text-white rounded-full w-16 h-16 flex items-center justify-center transition duration-300 cursor-pointer">
+                  <span className="text-3xl">▶</span>
                 </div>
               </div>
-            </a>
+            </div>
             <div className="text-gray-500 mt-2">00:45</div>
             <div className="text-[#0a0b3d] font-bold mt-2 text-2xl">Introduction</div>
             <p className="text-gray-600 mt-10 text-sm font-grandstander font-bold">
@@ -109,7 +107,7 @@ const ReviewCoach = () => {
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
             {coaches && coaches.length > 0 ? (
               coaches.map((coach) => (
-                <a href={`/DetailCoach/${coach.userId}`} key={coach.userId}>
+                <Link to={`/DetailCoach/${coach.userId}`} key={coach.userId}>
                   <div
                     className="bg-white rounded-lg shadow-md p-6 hover:shadow-lg transition-shadow duration-300"
                   >
@@ -146,7 +144,7 @@ const ReviewCoach = () => {
                       see now
                     </button>
                   </div>
-                </a>
+                </Link>
               ))
             ) : (
               <p className="text-center text-gray-500">No coaches available.</p>
