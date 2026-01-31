@@ -1,91 +1,101 @@
-# 🏓 PickleCoach-AI
+# 🏓 Pickleball AI: Smart Coaching & Management Platform
 
-Nền tảng học Pickleball ứng dụng trí tuệ nhân tạo (AI) và video call hỗ trợ kết nối huấn luyện viên trực tuyến. Hệ thống hỗ trợ Learner, Coach và Admin với giao diện riêng biệt.
+[![Spring Boot](https://img.shields.io/badge/Spring%20Boot-3.3.0-brightgreen)](https://spring.io/projects/spring-boot)
+[![React](https://img.shields.io/badge/React-18.x-blue)](https://react.dev/)
+[![FastAPI](https://img.shields.io/badge/FastAPI-0.100.x-009688)](https://fastapi.tiangolo.com/)
+[![Docker](https://img.shields.io/badge/Docker-Enabled-blue)](https://www.docker.com/)
+[![License](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 
-![trang chủ](https://raw.githubusercontent.com/phu-boop/PickleCoach-AI/refs/heads/main/pickleball/frontend/src/assets/images/Screenshot%202025-07-15%20144318.png)
-
-## 🚀 Tính năng nổi bật
-
-### 👨‍🎓 Learner App
-- Đăng ký, đánh giá kỹ năng đầu vào
-- Truy cập chương trình học & video hướng dẫn
-- Phân tích kỹ thuật AI (góc đánh, tư thế)
-- Đặt lịch huấn luyện viên (online/offline)
-- Gọi video với huấn luyện viên (WebRTC)
-- Theo dõi tiến độ, nhận huy hiệu, giao lưu cộng đồng
-
-### 🧑‍🏫 Coach App
-- Tạo & xác minh hồ sơ huấn luyện viên
-- Quản lý lịch dạy & buổi học
-- Gọi video trực tiếp với học viên
-- Theo dõi tiến độ học tập, gửi bài tập
-- Nhận thanh toán trực tuyến
-
-### 🛠️ Admin Portal
-- Xác minh người dùng & huấn luyện viên
-- Quản lý nội dung học tập
-- Kiểm duyệt video, thống kê & cấu hình hệ thống
-
-### 🤖 AI Phân Tích Kỹ Thuật
-- Upload video -> phân tích tư thế bằng OpenCV + TensorFlow
-- Phân loại các cú đánh: forehand, backhand, serve, volley...
-- Gợi ý nội dung học cá nhân hóa theo kỹ năng
+An end-to-end, AI-enhanced platform for Pickleball enthusiasts. This project bridges the gap between traditional coaching and modern technology by providing real-time AI analysis, WebRTC video calls, and a comprehensive management system for Learners, Coaches, and Administrators.
 
 ---
 
-## 🧱 Kiến trúc hệ thống
+## 🌟 Vision & Impact
 
-| Thành phần       | Công nghệ sử dụng       |
-|------------------|-------------------------|
-| Frontend Web     | React.js + Tailwind CSS |
-| Backend API      | Spring Boot (Java)      |
-| Database         | MySQL                   |
-| Realtime         | WebRTC, WebSocket       |
-| AI Processing    | Python, OpenCV, TensorFlow |
-| Auth             | JWT + OAuth2            |
-| Deploy           | Docker                  |
+Pickleball is the fastest-growing sport in the world, yet personalized coaching remains expensive and geographically limited. **PickleCoach-AI** democratizes professional coaching by:
+- Using **Computer Vision** to provide objective technique feedback.
+- Facilitating **Remote Coaching** through zero-latency WebRTC integration.
+- Automating **Curriculum Management** using AI-driven course recommendations.
 
 ---
 
-## 🐳 Cách chạy bằng Docker
+## 🛠️ Tech Stack & Architecture
 
-> **Yêu cầu:** Cài sẵn Docker & Docker Compose
-> - [Docker](https://docs.docker.com/get-docker/)
-> - [Docker Compose](https://docs.docker.com/compose/install/)
+This is a **Cloud-Native, Multi-Service Architecture**:
 
-### 1. Cấu hình môi trường (.env)
-File `.env` phải đặt cùng cấp với file `docker-compose.yml` tại thư mục `pickleball/docker/`.
+### Core Components
+-   **Frontend**: React.js 18 with Tailwind CSS for a premium, responsive UI.
+-   **Backend**: Java Spring Boot 3 with Spring Security, JWT, and JPA/Hibernate.
+-   **AI Engine**: Python FastAPI microservice utilizing **YOLOv8** (Object Detection) and **MediaPipe** (Pose Estimation).
+-   **Real-time Logic**: WebRTC (Signaling via WebSocket) for high-performance video communication.
+-   **Database**: MySQL (Production on Railway, Local on Docker).
+-   **Payments**: VNPAY Integration for secure coaching fee processing.
 
-Copy file mẫu và đổi tên thành `.env`:
-```bash
-cp pickleball/docker/.env.example pickleball/docker/.env
-```
-Cập nhật các giá trị trong `.env` (DB_HOST, PORT, etc.) cho phù hợp.
+---
 
-### 2. Build và chạy Docker
-Mở terminal tại thư mục chứa file docker-compose:
+## 🤖 AI Technical Deep Dive
+
+The **AI Vision Service** is the brain of the platform. It processes user-uploaded videos to provide frame-by-frame analysis:
+1.  **Pose Estimation**: Uses MediaPipe to track 33 body landmarks, calculating joint angles and stance stability.
+2.  **Ball Tracking**: Uses YOLOv8 (v8n) specialized model to detect the ball trajectory.
+3.  **Heuristic Analysis**: A custom feedback engine identifies common mistakes (e.g., "Non-dominant hand not stabilized", "Wrong contact point").
+4.  **Course Recommendation**: A NLP-based system maps technical errors to specific curriculum modules to suggest personalized drills.
+
+---
+
+## 🚀 Key Features
+
+### 👨‍🎓 For Learners
+-   **Skill Assessment**: Initial evaluation and progress tracking.
+-   **AI Studio**: Upload your game footage and get instant technical feedback.
+-   **Smart Scheduling**: Book and pay for 1-on-1 sessions with verified coaches.
+-   **Interactive Quizzes**: AI-generated quizzes to reinforce game rules and strategy.
+
+### 🧑‍🏫 For Coaches
+-   **Verified Profiles**: Showcase certifications and specialties.
+-   **Schedule Management**: Automated booking system with calendar sync.
+-   **Remote Coaching**: Conduct sessions via integrated video call.
+-   **Financial Dashboard**: Track earnings and payment statuses.
+
+### 🛡️ For Administrators
+-   **Content Verification**: Audit courses and verified user applications.
+-   **System Analytics**: Visualize user growth and revenue statistics.
+
+---
+
+## 🏗️ Getting Started
+
+### 🐳 Local Development (Docker)
+The easiest way to run the entire stack is using Docker Compose:
+
 ```bash
 cd pickleball/docker
-```
-
-Lần đầu cài đặt (hoặc khi có thay đổi code):
-```bash
+cp .env.example .env  # Update variables (DB_URL, API_KEYS)
 docker-compose up --build -d
 ```
 
-Các lần sau:
-```bash
-docker-compose up -d
-```
+### ☁️ Cloud Deployment (Render Blueprint)
+This project is configured for **Render Infrastructure as Code**.
+1. Push this repository to GitHub.
+2. Go to **Render Dashboard** -> **New** -> **Blueprint**.
+3. Connect the repo; it will automatically provision:
+    - Frontend (Static Site)
+    - Backend (Docker Web Service)
+    - AI Vision Service (Docker Web Service)
+    - Quiz Service (Docker Web Service)
 
-Dừng server:
-```bash
-docker-compose down
-```
+---
 
-### 3. Truy cập ứng dụng
-- **Frontend App**: http://localhost (Port 80)
-- **Backend API**: http://localhost:8080
-- **Admin/PhPMyAdmin** (nếu có): http://localhost:8081 (tuỳ cấu hình)
-- **AI Vision Service**: http://localhost:8000
-- **Quiz Generator**: http://localhost:8001
+## 📄 License
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+
+---
+
+## 🤝 Contact
+-   **Developed by**: [Your Name/Duy Phu]
+-   **Email**: [Your Email]
+-   **Portfolio**: [Link to Portfolio]
+-   **LinkedIn**: [Link to LinkedIn]
+
+---
+*Note: This project was developed as a comprehensive demonstration of Full-Stack development, AI integration, and Scalable Infrastructure.*
