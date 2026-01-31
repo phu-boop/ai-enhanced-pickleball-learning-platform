@@ -25,7 +25,7 @@ DELETE FROM modules;
 
 DELETE FROM courses;
 
--- 1. Users (NO created_at field in User entity)
+-- 1. Users
 INSERT INTO
     users (
         user_id,
@@ -125,7 +125,7 @@ VALUES (
         'INTERMEDIATE'
     );
 
--- 4. Courses (HAS created_at)
+-- 4. Courses
 INSERT INTO
     courses (
         id,
@@ -152,7 +152,7 @@ VALUES (
         NOW()
     );
 
--- 5. Modules (NO created_at)
+-- 5. Modules
 INSERT INTO
     modules (
         id,
@@ -176,7 +176,7 @@ VALUES (
         2
     );
 
--- 6. Lessons (HAS created_at)
+-- 6. Lessons
 INSERT INTO
     lessons (
         id,
@@ -224,23 +224,14 @@ VALUES (
         NOW()
     );
 
--- 7. Questions (NO created_at)
+-- 7. Questions (STRICTLY content, level, topic only)
 INSERT INTO
-    question (
-        id,
-        content,
-        level,
-        topic,
-        explanation,
-        image_url
-    )
+    question (id, content, level, topic)
 VALUES (
         1,
         'Vùng "The Kitchen" trong Pickleball là gì?',
         'BEGINNER',
-        'RULES',
-        'The Kitchen là vùng 7 feet từ lưới nơi không được volley.',
-        'https://images.unsplash.com/photo-1546519638-68e109498ffc?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80'
+        'RULES'
     );
 
 -- 8. Question Options
@@ -259,7 +250,7 @@ VALUES (1, 'Vùng cấm giao bóng', 0, 1),
         1
     );
 
--- 9. Sessions (HAS created_at)
+-- 9. Sessions
 INSERT INTO
     sessions (
         session_id,
@@ -289,7 +280,7 @@ VALUES (
         NOW()
     );
 
--- 10. Debts (NO created_at)
+-- 10. Debts
 INSERT INTO
     debts (
         id,
