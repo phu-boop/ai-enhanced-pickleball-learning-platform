@@ -50,7 +50,15 @@ async def root():
 
 @app.get("/health")
 async def health():
-    return {"status": "healthy"}
+    import video_processor
+    return {
+        "status": "healthy",
+        "models": {
+            "pose": video_processor.pose is not None,
+            "model": video_processor.model is not None,
+            "font": video_processor.font is not None
+        }
+    }
 
 
 def run_analysis_task(job_id: str, input_path: str, raw_output_path: str, final_output_path: str, final_output_filename: str):

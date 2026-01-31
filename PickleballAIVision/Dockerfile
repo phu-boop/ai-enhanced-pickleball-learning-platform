@@ -10,6 +10,7 @@ RUN apt-get update && apt-get install -y \
     libxext6 \
     libgl1 \
     libegl1 \
+    libglib2.0-0 \
     wget \
     git \
     build-essential \

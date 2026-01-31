@@ -12,45 +12,53 @@ from ultralytics import YOLO
 from ball_tracker import BallTracker
 from feedback import detect_shot_type_and_feedback
 from PIL import Image, ImageDraw, ImageFont
+import traceback
 
 # --- Global Initialization (Pre-load models to avoid 504 timeouts) ---
-logging.info("Initializing Global Models...")
+logging.info(">>> [AI] Starting Global Initialization...")
 
-# Initialize placeholders to avoid UnboundLocalError
 mp_pose = None
 pose = None
 model = None
 font = None
 
 try:
+    logging.info(">>> [AI] Initializing MediaPipe Pose...")
     mp_pose = mp.solutions.pose
     pose = mp_pose.Pose()
+    logging.info(">>> [AI] MediaPipe Pose Initialized Successfully.")
     
-    # Use absolute path to the pre-downloaded model in Docker
+    logging.info(">>> [AI] Searching for YOLO model...")
     model_path = os.path.join(os.getcwd(), "yolov8n.pt")
-    if not os.path.exists(model_path):
-        model_path = "yolov8n.pt" # Fallback to auto-download if missing
+    if os.path.exists(model_path):
+        logging.info(f">>> [AI] Found YOLO model at: {model_path}")
+    else:
+        logging.warning(f">>> [AI] YOLO model not found at {model_path}, relying on default search path.")
+        model_path = "yolov8n.pt"
     
+    logging.info(">>> [AI] Initializing YOLOv8 Model...")
     model = YOLO(model_path)
     # Force CPU to save RAM and avoid GPU-related issues on Render Free Tier
     try:
         model.to('cpu')
-    except:
-        pass
+        logging.info(">>> [AI] YOLOv8 Model moved to CPU.")
+    except Exception as e:
+        logging.warning(f">>> [AI] Could not explicitly move YOLO to CPU: {e}")
     
-    # Pre-load font for better performance
+    logging.info(">>> [AI] Pre-loading font...")
     try:
         font = ImageFont.truetype("arial.ttf", 20)
     except:
         try:
             font = ImageFont.truetype("roboto.ttf", 20)
         except:
-            logging.warning("No standard fonts found, using default font")
+            logging.warning(">>> [AI] No standard fonts found, using default font.")
             font = ImageFont.load_default()
             
-    logging.info("Global Models Initialized Successfully")
+    logging.info(">>> [AI] Global Models Initialized Successfully.")
 except Exception as e:
-    logging.error(f"Failed to initialize global models: {str(e)}")
+    logging.error(f">>> [AI] CRITICAL: Global Initialization Failed: {str(e)}")
+    logging.error(traceback.format_exc())
 
 def process_video(input_path, output_path):
     # Ensure models are available
