@@ -55,4 +55,4 @@ venv/
 application.properties
 
 # ==== Project-specific ====
-PickleballAIVision/
+# PickleballAIVision/ is no longer ignored as it is part of the core codebase

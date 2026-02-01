@@ -9,7 +9,6 @@ RUN apt-get update && apt-get install -y \
     libsm6 \
     libxext6 \
     libgl1 \
-    libgl1-mesa-glx \
     libegl1 \
     libglib2.0-0 \
     wget \

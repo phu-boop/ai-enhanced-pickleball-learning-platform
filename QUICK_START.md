@@ -23,7 +23,7 @@ netstat -tuln | grep -E ':(80|8081|8090|3307)'
 
 ### Step 1: Configure Environment (2 minutes)
 ```bash
-cd /home/devphu/Documents/complete-project/PickleCoach-AI/pickleball/docker
+cd pickleball/docker
 
 # Edit .env file
 nano .env

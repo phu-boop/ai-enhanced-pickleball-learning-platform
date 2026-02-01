@@ -25,7 +25,7 @@ services:
       args:
         - OPENROUTER_API_KEY=${OPENROUTER_API_KEY}
         - VITE_API_URL=${BACKEND_URL_PUBLIC}
-        - VITE_AI_SERVICE_URL=${VITE_AI_SERVICE_URL}
+        - VITE_AI_SERVICE_URL=${VITE_AI_SERVICE_URL:-http://localhost:8090}
     image: picklecoach-frontend
     ports:
       - "${FRONTEND_PORT}:80"
@@ -70,6 +70,9 @@ services:
       - "${AI_SERVICE_PORT}:8000"
     env_file:
       - .env
+    environment:
+      - PORT=8000
+      - AI_MODELS_PATH=/app/models
     networks:
       - app-network
     restart: unless-stopped
