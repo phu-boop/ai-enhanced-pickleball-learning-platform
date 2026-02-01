@@ -31,25 +31,17 @@ services:
       - key: Vnp_Url
         value: https://sandbox.vnpayment.vn/paymentv2/vpcpay.html
       - key: Return_url
-        value: https://${FRONTEND_HOST}/payment-return
+        value: https://picklecoach-frontend.onrender.com/payment-return
       - key: EMAIL
         sync: false
       - key: APP_PASSWORD
         sync: false
-      - key: AI_SERVICE_HOST
-        fromService:
-          name: picklecoach-aivision
-          type: web
-          property: host
       - key: AI_SERVICE_URL_INTERNAL
-        value: http://${AI_SERVICE_HOST}
-      - key: FRONTEND_HOST
-        fromService:
-          name: picklecoach-frontend
-          type: web
-          property: host
+        value: https://picklecoach-aivision.onrender.com
+      - key: AI_SERVICE_URL
+        value: https://picklecoach-quiz.onrender.com
       - key: FRONTEND_URL_PUBLIC
-        value: https://${FRONTEND_HOST}
+        value: https://picklecoach-frontend.onrender.com
 
   # 2. AI Vision Service (Python Fast API)
   - type: web
@@ -85,17 +77,7 @@ services:
         source: /*
         destination: /index.html
     envVars:
-      - key: BACKEND_HOST
-        fromService:
-          name: picklecoach-backend
-          type: web
-          property: host
       - key: VITE_API_URL
-        value: https://${BACKEND_HOST}
-      - key: AI_SERVICE_HOST
-        fromService:
-          name: picklecoach-aivision
-          type: web
-          property: host
+        value: https://picklecoach-backend.onrender.com
       - key: VITE_AI_SERVICE_URL
-        value: https://${AI_SERVICE_HOST}
+        value: https://picklecoach-aivision.onrender.com
