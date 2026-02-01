@@ -21,6 +21,11 @@ RUN apt-get update && apt-get install -y \
 ENV GLOG_logtostderr=0
 ENV GLOG_minloglevel=2
 
+# Optimization for Render Free Tier (512MB RAM)
+ENV OMP_NUM_THREADS=1
+ENV MPLBACKEND=Agg
+ENV MALLOC_ARENA_MAX=2
+
 # Pre-download YOLO model during build to avoid runtime delay/timeout
 RUN wget https://github.com/ultralytics/assets/releases/download/v8.4.0/yolov8n.pt -O /app/yolov8n.pt
 

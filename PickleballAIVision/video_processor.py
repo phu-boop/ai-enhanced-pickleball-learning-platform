@@ -25,7 +25,8 @@ font = None
 try:
     logging.info(">>> [AI] Initializing MediaPipe Pose...")
     mp_pose = mp.solutions.pose
-    pose = mp_pose.Pose()
+    # Set model_complexity=0 (Lite) to save memory on Render Free Tier
+    pose = mp_pose.Pose(model_complexity=0)
     logging.info(">>> [AI] MediaPipe Pose Initialized Successfully.")
     
     logging.info(">>> [AI] Searching for YOLO model...")

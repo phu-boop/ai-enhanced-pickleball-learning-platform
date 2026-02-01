@@ -11,8 +11,9 @@ import java.util.Optional;
 @Repository
 public interface UserRepository extends JpaRepository<User, String> {
     Optional<User> findByEmail(String email);
+
     boolean existsByEmail(String email);
-    Optional<User> findById(String id);
+
     Optional<Object> findByid(String id);
 
     // Thêm phương thức đếm tổng số người dùng theo vai trò

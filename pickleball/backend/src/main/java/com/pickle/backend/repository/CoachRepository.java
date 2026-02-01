@@ -10,8 +10,10 @@ import java.util.Optional;
 @Repository
 public interface CoachRepository extends JpaRepository<Coach, String> {
     List<Coach> findBySpecialtiesContaining(String specialty);
+
     List<Coach> findByCertificationsContaining(String certification);
-    Optional<Coach> findById(String id);
+
     Coach findCoachByUserId(String userId);
+
     boolean existsByUserId(String userId);
 }
