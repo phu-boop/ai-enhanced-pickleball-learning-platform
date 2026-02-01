@@ -46,19 +46,39 @@ try:
         logging.warning(f">>> [AI] Could not explicitly move YOLO to CPU: {e}")
     
     logging.info(">>> [AI] Pre-loading font...")
-    try:
-        font = ImageFont.truetype("arial.ttf", 20)
-    except:
+    font_paths = [
+        "/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf",
+        "/usr/share/fonts/truetype/liberation/LiberationSans-Regular.ttf",
+        "/usr/share/fonts/truetype/dejavu/DejaVuSans-Bold.ttf",
+        "arial.ttf",
+        "roboto.ttf"
+    ]
+    
+    font = None
+    for path in font_paths:
         try:
-            font = ImageFont.truetype("roboto.ttf", 20)
-        except:
-            logging.warning(">>> [AI] No standard fonts found, using default font.")
+            if os.path.exists(path) or not path.startswith("/"):
+                font = ImageFont.truetype(path, 20)
+                logging.info(f">>> [AI] Font loaded successfully from: {path}")
+                break
+        except Exception as e:
+            logging.debug(f">>> [AI] Failed to load font from {path}: {e}")
+            
+    if font is None:
+        try:
+            logging.warning(">>> [AI] No standard Linux fonts found, using default PIL font.")
             font = ImageFont.load_default()
+        except Exception as e:
+            logging.error(f">>> [AI] Failed to load even default font: {e}")
             
     logging.info(">>> [AI] Global Models Initialized Successfully.")
 except Exception as e:
     logging.error(f">>> [AI] CRITICAL: Global Initialization Failed: {str(e)}")
     logging.error(traceback.format_exc())
+    # Ensure critical objects at least exist as None to avoid NameError later
+    if 'pose' not in locals(): pose = None
+    if 'model' not in locals(): model = None
+    if 'font' not in locals(): font = None
 
 def process_video(input_path, output_path):
     # Ensure models are available

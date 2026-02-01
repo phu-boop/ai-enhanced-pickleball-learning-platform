@@ -17,6 +17,7 @@ const LoginPage = () => {
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [message, setMessage] = useState('');
+  const [loading, setLoading] = useState(false);
   const { login } = useAuth();
 
   const handleCheck = () => {
@@ -30,6 +31,7 @@ const LoginPage = () => {
 
   const handleSubmitLogin = async (e) => {
     e.preventDefault();
+    setLoading(true);
     try {
       const response = await ApiLogin(email, password);
       const { token, role, id_user } = response;
@@ -52,6 +54,8 @@ const LoginPage = () => {
     } catch (error) {
       setMessage("Invalid email or password");
       console.error('Error during login:', error);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -129,10 +133,21 @@ const LoginPage = () => {
             )}
 
             <button
-              className="w-full py-4 bg-[#2c91aa] text-white rounded-full text-xl font-semibold hover:bg-gradient-to-b hover:from-[#2d97b2] hover:to-[#135a6b] transition duration-300"
-              onClick={(e) => handleSubmitLogin(e)}
+              className={`w-full py-4 text-white rounded-full text-xl font-semibold transition duration-300 flex items-center justify-center gap-3 ${loading
+                  ? 'bg-[#135a6b] cursor-not-allowed opacity-80'
+                  : 'bg-[#2c91aa] hover:bg-gradient-to-b hover:from-[#2d97b2] hover:to-[#135a6b]'
+                }`}
+              onClick={(e) => !loading && handleSubmitLogin(e)}
+              disabled={loading}
             >
-              Continue
+              {loading ? (
+                <>
+                  <div className="w-6 h-6 border-4 border-white border-t-transparent rounded-full animate-spin"></div>
+                  Processing...
+                </>
+              ) : (
+                "Continue"
+              )}
             </button>
 
             <p className="text-base text-gray-500 mt-5 text-center">
@@ -203,8 +218,8 @@ const LoginPage = () => {
 
             <button
               className={`w-full py-4 rounded-full text-xl font-semibold transition duration-300 ${check
-                  ? 'bg-[#2c91aa] text-white hover:bg-gradient-to-b hover:from-[#2d97b2] hover:to-[#135a6b]'
-                  : 'bg-gray-300 text-gray-500 cursor-not-allowed'
+                ? 'bg-[#2c91aa] text-white hover:bg-gradient-to-b hover:from-[#2d97b2] hover:to-[#135a6b]'
+                : 'bg-gray-300 text-gray-500 cursor-not-allowed'
                 }`}
               onClick={handleSubmit}
               disabled={!check}
