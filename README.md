@@ -1,4 +1,4 @@
-# 🏓 Pickleball AI: Smart Coaching & Management Platform
+# 🏓 PickleCoach-AI | AI-Enhanced Pickleball Coaching Platform
 
 [![Spring Boot](https://img.shields.io/badge/Spring%20Boot-3.3.0-brightgreen)](https://spring.io/projects/spring-boot)
 [![React](https://img.shields.io/badge/React-18.x-blue)](https://react.dev/)
@@ -16,7 +16,8 @@ An end-to-end, AI-enhanced platform for Pickleball enthusiasts. This project bri
 - 📊 **Main Backend**: [https://picklecoach-backend.onrender.com](https://picklecoach-backend.onrender.com)
 
 ## 🔐 Test Accounts
-To explore the platform immediately, use the following credentials:
+> [!IMPORTANT]
+> The following credentials are for **demonstration purposes only**. Passwords are periodically reset, and sensitive data is rotated automatically to ensure system integrity.
 
 | Role | Email | Password |
 |------|-------|----------|
@@ -64,6 +65,21 @@ Pickleball is the fastest-growing sport in the world, yet personalized coaching 
 
 ---
 
+## 🧠 What I Built (Engineering Highlights)
+- **Full-Stack Architecture**: Designed and implemented a multi-service system using React, Spring Boot, and FastAPI.
+- **AI-Powered Analysis**: Integrated **YOLOv8** for real-time ball detection and **MediaPipe** for 3D pose estimation to provide automated technical feedback.
+- **Real-Time Communication**: Built a custom WebRTC signaling server using WebSockets to enable zero-latency video coaching.
+- **Asynchronous Processing**: Developed a robust video processing pipeline capable of handling large files without blocking main application threads.
+- **Scalable Infrastructure**: Containerized all services using Docker and configured automated blueprints for cloud deployment.
+
+## 🎓 What I Learned
+- **System Design**: Managing complex interactions between Java/Spring (Business Logic) and Python/FastAPI (AI Logic).
+- **WebRTC Complexity**: Handling ICE candidates, STUN/TURN servers, and peer-to-peer negotiation.
+- **AI Optimization**: Deploying ML models in resource-constrained cloud environments (Render/Docker).
+- **Security Best Practices**: Implementing RBAC (Role-Based Access Control) and securing real-time signaling channels.
+
+---
+
 ## 🧩 System Architecture
 
 ```mermaid
@@ -91,43 +107,6 @@ graph TD
     AI_Vision -- "Video Analysis" --> SB
 ```
 
-### 🏗️ Technical Implementation
-- **React Frontend** communicates via REST + WebSocket for real-time interaction.
-- **Spring Boot 3** handles Authentication (JWT), Business Logic, and Payments.
-- **FastAPI AI Service** processes video asynchronously to avoid blocking.
-- **WebRTC** signaling via Spring WebSocket for peer-to-peer coaching sessions.
-- **MySQL** for transactional data (Production on Railway/Render).
-- **VNPAY** Integration for secure coaching fee processing.
-
----
-
-## 🧠 Engineering Challenges & Solutions
-
-### 1. WebRTC Signaling Reliability
-**Problem:** ICE candidates arriving before peer connection was ready.  
-**Solution:** Implemented room-based signaling with a robust "ready" handshake protocol.  
-**Result:** Stable video calls with <300ms latency even on cross-region connections.
-
-### 2. AI Processing Timeout on Cloud
-**Problem:** Video analysis (YOLOv8 + MediaPipe) exceeded Render's standard request timeout.  
-**Solution:** Switched to an asynchronous background processing architecture with client polling and job tracking.  
-**Result:** 0 timeouts, supports large video uploads, and highly scalable.
-
-### 3. Secure Payment Flow
-**Problem:** Preventing "man-in-the-middle" attacks and fake payment callbacks.  
-**Solution:** Implemented VNPAY signature validation + idempotent transaction logic to ensure each payment is processed exactly once.  
-**Result:** 100% reliable financial transactions.
-
----
-
-## 🤖 AI Technical Deep Dive
-
-The **AI Vision Service** processes user-uploaded videos to provide frame-by-frame analysis:
-1.  **Pose Estimation**: Uses MediaPipe to track 33 body landmarks, calculating joint angles and stance stability.
-2.  **Ball Tracking**: Uses a specialized YOLOv8 (v8n) model for trajectory detection.
-3.  **Heuristic Analysis**: A custom engine identifies common technical mistakes.
-4.  **Course Recommendation**: Maps technical errors to specific curriculum modules via NLP.
-
 ---
 
 ## 🧪 Testing & Quality
@@ -149,12 +128,16 @@ The **AI Vision Service** processes user-uploaded videos to provide frame-by-fra
 picklecoach-ai/
 ├── pickleball/
 │   ├── frontend/        # React + Tailwind CSS
-│   ├── backend/         # Spring Boot API
+│   ├── backend/         # Java Spring Boot 3 API
 │   └── docker/          # Docker Compose configurations
-├── PickleballAIVision/  # FastAPI AI Service (Process logic)
-├── Pickeball_AI_Quizz/   # AI Quiz Engine
-├── Screenshots1.png     # Application Screenshots
-├── Screenshots2.png     # Application Screenshots
+├── PickleballAIVision/  # FastAPI AI Service (Python)
+├── Pickeball_AI_Quizz/   # AI Quiz Engine (Python)
+├── Screenshots1.png     # Platform Overviews
+├── Screenshots2.png     # Technical Highlights
+├── Screenshot3.png      # AI Analysis Preview
+├── CONTRIBUTING.md      # Development Guidelines
+├── LICENSE              # MIT License
+├── seed_data.sql        # Database initialization
 └── README.md
 ```
 
@@ -186,6 +169,8 @@ cd pickleball/docker
 docker compose up --build -d
 ```
 
+---
+
 ## 🤝 Contact
 - **Developer**: Nguyễn Lê Anh Phú
 - **Email**: [phudz25022005@gmail.com](mailto:phudz25022005@gmail.com)
@@ -193,6 +178,7 @@ docker compose up --build -d
 - **LinkedIn**: [linkedin.com/in/nguy%E1%BB%85n-l%C3%AA-anh-ph%C3%BA-8392393a9](https://www.linkedin.com/in/nguy%E1%BB%85n-l%C3%AA-anh-ph%C3%BA-8392393a9)
 
 ---
+
 ## 📄 License
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
 
